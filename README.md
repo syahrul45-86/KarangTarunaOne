@@ -56,6 +56,32 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+
+# KarangTarunaOne
+Sistem informasi manajemen Karang Taruna berbasis **Laravel** untuk mendukung administrasi organisasi di tingkat RT secara terstruktur, transparan, dan efisien.
+## Fitur Utama
+- Multi-role pengguna: **Superadmin, Admin RT, Sekretaris, Bendahara, Anggota**
+- Manajemen anggota RT
+- Absensi kegiatan berbasis **QR Code**
+- Catatan arisan (tahun, tanggal, checklist pembayaran)
+- Pengelolaan kas dan catatan keuangan
+- Pengelolaan denda (manual & otomatis dari absensi)
+- Rekap data dan visualisasi laporan
+## Teknologi
+- Laravel 12
+- PHP 8.2+
+- Blade Template
+- MySQL / MariaDB
+- Vite + Tailwind CSS
+## Tujuan Proyek
+Membantu pengurus Karang Taruna dalam:
+1. Mempermudah pendataan anggota
+2. Meningkatkan akurasi absensi kegiatan
+3. Menjaga keteraturan pencatatan arisan dan kas
+4. Menyediakan laporan yang mudah dipantau oleh pengurus RT
+## Status
+Proyek aktif dikembangkan untuk kebutuhan operasional organisasi Karang Taruna.
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
