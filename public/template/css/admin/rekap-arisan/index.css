@@ -1,0 +1,297 @@
+
+    .rekap-arisan-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .rekap-arisan-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .rekap-arisan-header h3 {
+        color: white;
+        font-size: clamp(20px, 4vw, 28px);
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0;
+    }
+
+    .rekap-arisan-table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .rekap-arisan-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .rekap-arisan-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+
+    .rekap-arisan-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .rekap-arisan-table thead th {
+        color: white;
+        padding: 18px 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .rekap-arisan-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+
+    .rekap-arisan-table tbody tr:hover {
+        background: #f7fafc;
+        transform: scale(1.01);
+    }
+
+    .rekap-arisan-table tbody td {
+        padding: 16px;
+        color: #2d3748;
+        font-size: 14px;
+    }
+
+    .rekap-arisan-tahun {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 16px;
+    }
+
+    .rekap-arisan-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #4a5568;
+        font-weight: 500;
+    }
+
+    .rekap-arisan-btn-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .rekap-arisan-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .rekap-arisan-btn-detail {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .rekap-arisan-btn-detail:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        color: white;
+    }
+
+    .rekap-arisan-btn-pdf {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+    }
+
+    .rekap-arisan-btn-pdf:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 87, 108, 0.5);
+        color: white;
+    }
+
+    .rekap-arisan-btn-grafik {
+        background: linear-gradient(145deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+    }
+
+    .rekap-arisan-btn-grafik:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 172, 254, 0.5);
+        color: white;
+    }
+
+    .rekap-arisan-btn-anggota {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(67, 233, 123, 0.3);
+    }
+
+    .rekap-arisan-btn-anggota:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(67, 233, 123, 0.5);
+        color: white;
+    }
+
+    .rekap-arisan-empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #a0aec0;
+    }
+
+    .rekap-arisan-empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+
+    .rekap-arisan-empty-state-text {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .rekap-arisan-header {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .rekap-arisan-table-container {
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .rekap-arisan-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .rekap-arisan-table {
+            min-width: 100%;
+            display: table;
+        }
+
+        .rekap-arisan-table thead {
+            display: none;
+        }
+
+        .rekap-arisan-table tbody {
+            display: block;
+        }
+
+        .rekap-arisan-table tbody tr {
+            display: block;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 16px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .rekap-arisan-table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .rekap-arisan-table tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: left;
+        }
+
+        .rekap-arisan-table tbody td:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .rekap-arisan-table tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+
+        .rekap-arisan-table tbody td:first-child {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: -20px -20px 12px -20px;
+            padding: 12px 20px;
+            border-radius: 16px 16px 0 0;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+        }
+
+        .rekap-arisan-table tbody td:first-child::before {
+            color: white;
+        }
+
+        .rekap-arisan-tahun {
+            text-align: right;
+            flex: 1;
+        }
+
+        .rekap-arisan-count {
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .rekap-arisan-btn-group {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .rekap-arisan-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 10px 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .rekap-arisan-container {
+            padding: 12px;
+        }
+
+        .rekap-arisan-header {
+            padding: 20px;
+        }
+    }
+

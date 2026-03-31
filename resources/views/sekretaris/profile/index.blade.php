@@ -1,0 +1,51 @@
+@extends('sekretaris.layouts.master')
+
+@section('content')
+<div class="page-body">
+    <div class="container-xl">
+        {{-- Profile Update --}}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Profile </h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('sekretaris.profile.index') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" value="{{ old('name', $sekretaris->name) }}">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="text" class="form-control" name="email" value="{{ old('email', $sekretaris->email) }}">
+                        </div>
+                    </div>
+
+                    {{-- Tambah image --}}
+                    <div class="mb-3">
+                        <label class="form-label">Profile Image</label><br>
+                        @if($sekretaris->image)
+                            <img src="{{ asset('storage/'.$sekretaris->image) }}" alt="Profile" width="120" class="img-thumbnail mb-2">
+                        @endif
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <input type="text" class="form-control" name="role" value="{{ old('role', $sekretaris->role) }}" readonly>
+                        {{-- kalau tidak boleh diedit, pakai readonly --}}
+                    </div>
+
+                 <div class="mb-3">
+                    <a href="{{ route('sekretaris.profile.edit') }}" class="btn btn-primary">Edit Profile</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@include('anggota.layouts.footer')
+@endsection
+

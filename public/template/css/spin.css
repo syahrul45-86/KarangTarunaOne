@@ -1,0 +1,326 @@
+
+        .roda-spin-wrapper {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            -webkit-border-radius: 24px;
+            -moz-border-radius: 24px;
+            -ms-border-radius: 24px;
+            -o-border-radius: 24px;
+}
+
+        .roda-center-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .roda-wheel-title {
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #roda-chart {
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+            position: relative;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+        }
+
+        #roda-spin-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(70px, 15vw, 90px);
+            height: clamp(70px, 15vw, 90px);
+            background: linear-gradient(145deg, #ffd700, #ffed4e);
+            border: 4px solid #f39c12;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: clamp(14px, 3vw, 18px);
+            color: #2d3748;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #roda-spin-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        #roda-spin-button:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        #roda-arrow {
+            position: absolute;
+            top: 50%;
+            right: -3%;
+            transform: translateY(-50%) rotate(180deg);
+            z-index: 10;
+            width: 0;
+            height: 0;
+            border-top: clamp(12px, 2.5vw, 16px) solid transparent;
+            border-bottom: clamp(12px, 2.5vw, 16px) solid transparent;
+            border-left: clamp(18px, 3.5vw, 24px) solid #e74c3c;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        #roda-input-names {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .roda-form-group {
+            margin-bottom: 15px;
+        }
+
+        .roda-form-label {
+            display: block;
+            font-size: clamp(14px, 2.5vw, 16px);
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .roda-form-select {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: white;
+            cursor: pointer;
+        }
+
+        .roda-form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .roda-selected-list {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 12px;
+            min-height: 50px;
+        }
+
+        .roda-selected-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .roda-selected-item {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .roda-remove-item {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .roda-btn {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: clamp(14px, 2.5vw, 16px);
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .roda-btn-add {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .roda-btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.5);
+        }
+
+        .roda-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .roda-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .roda-btn-secondary {
+            background: linear-gradient(135deg, #355be3 0%, #3180ff 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(3, 217, 255, 0.4);
+        }
+
+        .roda-btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(11, 218, 255, 0.5);
+        }
+
+        .roda-btn:active {
+            transform: translateY(0);
+        }
+
+        .roda-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        #roda-winner-display {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+            z-index: 9999;
+            animation: rodaFadeIn 0.3s ease;
+        }
+
+        .roda-winner-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        #roda-winner-name {
+            color: #ffffff;
+            font-size: clamp(32px, 8vw, 64px);
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+                         0 0 40px rgba(255, 215, 0, 0.6),
+                         0 0 60px rgba(255, 215, 0, 0.4);
+            animation: rodaGlow 2s ease-in-out infinite;
+            line-height: 1.2;
+        }
+
+        .roda-winner-emoji {
+            font-size: clamp(48px, 12vw, 96px);
+            display: block;
+            margin-bottom: 20px;
+            animation: rodaBounce 1s ease infinite;
+        }
+
+        .roda-btn-close {
+            background: linear-gradient(145deg, #ffd700, #ffed4e);
+            color: #2d3748;
+            padding: 16px 40px;
+            font-size: clamp(16px, 3vw, 20px);
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .roda-btn-close:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .roda-confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: rodaFall linear infinite;
+            z-index: 10000;
+        }
+
+        @keyframes rodaFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes rodaGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6); }
+            50% { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 215, 0, 0.8); }
+        }
+
+        @keyframes rodaBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes rodaFall {
+            0% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(calc(-50vw + 100px)) translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .roda-center-container {
+                padding: 20px;
+            }
+
+            .roda-wheel-title {
+                margin-bottom: 20px;
+            }
+
+            #roda-chart {
+                margin-bottom: 20px;
+            }
+        }

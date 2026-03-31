@@ -1,0 +1,369 @@
+
+    .rekap-denda-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .rekap-denda-header {
+        background: linear-gradient(135deg, #3c30e3 0%, #6331da 100%);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(100, 233, 182, 0.096);
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .rekap-denda-header h3 {
+        color: white;
+        font-size: clamp(20px, 4vw, 28px);
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0;
+    }
+
+    .rekap-denda-btn-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .rekap-denda-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .rekap-denda-btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .rekap-denda-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        color: white;
+    }
+
+    .rekap-denda-btn-secondary {
+        background: linear-gradient(145deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+    }
+
+    .rekap-denda-btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 172, 254, 0.6);
+        color: white;
+    }
+
+    .rekap-denda-search-container {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .rekap-denda-search-wrapper {
+        position: relative;
+        max-width: 500px;
+    }
+
+    .rekap-denda-search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #07ee12;
+    }
+
+    .rekap-denda-search-input {
+        width: 100%;
+        padding: 14px 16px 14px 48px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .rekap-denda-search-input:focus {
+        border-color: #03b821;
+        box-shadow: 0 0 0 4px rgba(245, 87, 108, 0.1);
+    }
+
+    .rekap-denda-search-input::placeholder {
+        color: #a0aec0;
+    }
+
+    .rekap-denda-table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .rekap-denda-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .rekap-denda-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+
+    .rekap-denda-table thead {
+        background: linear-gradient(135deg, #3c30e3 0%, #6331da 100%);
+
+    }
+
+    .rekap-denda-table thead th {
+        color: white;
+        padding: 18px 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .rekap-denda-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+
+
+    .rekap-denda-table tbody tr:hover {
+        background: #fff5f7;
+        transform: scale(1.01);
+    }
+
+    .rekap-denda-table tbody td {
+        padding: 16px;
+        color: #2d3748;
+        font-size: 14px;
+    }
+
+    .rekap-denda-nama {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 15px;
+    }
+
+    .rekap-denda-amount {
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .rekap-denda-total {
+        color: #a8a0a0;
+    }
+
+    .rekap-denda-unpaid {
+        color: #a8a0a0;
+        background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+        padding: 6px 12px;
+        border-radius: 8px;
+        display: inline-block;
+    }
+
+    .rekap-denda-btn-detail {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .rekap-denda-btn-detail:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        color: white;
+    }
+
+    .rekap-denda-empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #a0aec0;
+    }
+
+    .rekap-denda-empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+
+    .rekap-denda-empty-state-text {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .rekap-denda-container {
+            padding: 12px;
+        }
+
+        .rekap-denda-header {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .rekap-denda-header h3 {
+            margin-bottom: 15px;
+        }
+
+        .rekap-denda-btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .rekap-denda-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .rekap-denda-search-container {
+            padding: 16px;
+        }
+
+        .rekap-denda-search-wrapper {
+            max-width: 100%;
+        }
+
+        .rekap-denda-table-container {
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .rekap-denda-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .rekap-denda-table {
+            min-width: 100%;
+            display: table;
+        }
+
+        .rekap-denda-table thead {
+            display: none;
+        }
+
+        .rekap-denda-table tbody {
+            display: block;
+        }
+
+        .rekap-denda-table tbody tr {
+            display: block;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 16px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .rekap-denda-table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .rekap-denda-table tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: left;
+        }
+
+        .rekap-denda-table tbody td:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+            justify-content: flex-end;
+        }
+
+        .rekap-denda-table tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+
+        .rekap-denda-table tbody td:first-child {
+            background: linear-gradient(135deg, #1d20d0 0%, #ffffff 100%);
+            color: white;
+            margin: -20px -20px 12px -20px;
+            padding: 12px 20px;
+            border-radius: 16px 16px 0 0;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+        }
+
+        .rekap-denda-table tbody td:first-child::before {
+            color: white;
+        }
+
+        .rekap-denda-nama {
+            text-align: right;
+            flex: 1;
+        }
+
+        .rekap-denda-amount {
+            text-align: right;
+            flex: 1;
+        }
+
+        .rekap-denda-unpaid {
+            text-align: right;
+        }
+
+        .rekap-denda-btn-detail {
+            width: auto;
+            padding: 10px 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .rekap-denda-container {
+            padding: 12px;
+        }
+
+        .rekap-denda-header {
+            padding: 20px;
+        }
+    }
+

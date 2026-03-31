@@ -1,0 +1,338 @@
+
+    .peranggota-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .peranggota-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .peranggota-header h3 {
+        color: white;
+        font-size: clamp(20px, 4vw, 28px);
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0;
+    }
+
+    .peranggota-btn-back {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .peranggota-btn-back:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        color: white;
+    }
+
+    .peranggota-search-container {
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .peranggota-search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+        color: #a0aec0;
+    }
+
+    .peranggota-search-input {
+        width: 100%;
+        padding: 16px 20px 16px 55px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .peranggota-search-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .peranggota-table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .peranggota-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .peranggota-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    .peranggota-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .peranggota-table thead th {
+        color: white;
+        padding: 18px 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .peranggota-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+
+    .peranggota-table tbody tr:hover {
+        background: #f7fafc;
+        transform: scale(1.01);
+    }
+
+    .peranggota-table tbody td {
+        padding: 16px;
+        color: #2d3748;
+        font-size: 14px;
+    }
+
+    .peranggota-nama {
+        font-weight: 600;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .peranggota-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 50px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .peranggota-badge-hadir {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+    }
+
+    .peranggota-badge-tidak-hadir {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+    }
+
+    .peranggota-progress-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .peranggota-progress-bar {
+        flex: 1;
+        height: 12px;
+        background: #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .peranggota-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        border-radius: 6px;
+        transition: width 1s ease;
+        position: relative;
+    }
+
+    .peranggota-progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .peranggota-progress-text {
+        font-weight: 700;
+        color: #2d3748;
+        min-width: 50px;
+        text-align: right;
+    }
+
+    .peranggota-empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: #a0aec0;
+    }
+
+    .peranggota-empty-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+
+    .peranggota-empty-text {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .peranggota-back-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .peranggota-header {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .peranggota-header h3 {
+            margin-bottom: 15px;
+        }
+
+        .peranggota-btn-back {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .peranggota-table-container {
+            border-radius: 12px;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .peranggota-table-wrapper {
+            overflow-x: visible;
+        }
+
+        .peranggota-table {
+            min-width: 100%;
+        }
+
+        .peranggota-table thead {
+            display: none;
+        }
+
+        .peranggota-table tbody tr {
+            display: block;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 16px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .peranggota-table tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .peranggota-table tbody td {
+            display: block;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .peranggota-table tbody td:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+        }
+
+        .peranggota-table tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .peranggota-table tbody td:first-child {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: -20px -20px 12px -20px;
+            padding: 16px 20px;
+            border-radius: 16px 16px 0 0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .peranggota-table tbody td:first-child::before {
+            display: none;
+        }
+
+        .peranggota-nama {
+            justify-content: flex-start;
+        }
+
+        .peranggota-progress-container {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+        }
+
+        .peranggota-progress-text {
+            text-align: center;
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .peranggota-container {
+            padding: 12px;
+        }
+
+        .peranggota-header {
+            padding: 16px;
+        }
+    }

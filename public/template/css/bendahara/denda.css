@@ -1,0 +1,486 @@
+
+    .denda-page-wrapper {
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Header Section */
+    .denda-header-section {
+        background: linear-gradient(135deg, #2779fd 0%, #0872c9 50%, #057af6 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(6, 215, 230, 0.43);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInDown 0.6s ease;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .denda-header-section::before {
+        content: '💰';
+        position: absolute;
+        font-size: 200px;
+        right: -30px;
+        top: -50px;
+        opacity: 0.1;
+        transform: rotate(-15deg);
+    }
+
+    .denda-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .denda-header-section h3 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .denda-header-section h3::before {
+        content: '💸';
+        font-size: 32px;
+    }
+
+    .denda-btn-add {
+        background: white;
+        color: #000000;
+        padding: 12px 24px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .denda-btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        color: #ef4444;
+    }
+
+    .denda-btn-add::before {
+        content: '+';
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    /* Search Box */
+    .denda-search-box {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        animation: fadeInUp 0.6s ease 0.2s both;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .denda-search-wrapper {
+        position: relative;
+    }
+
+    .denda-search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 18px;
+    }
+
+    .denda-search-input {
+        width: 100%;
+        padding: 14px 14px 14px 48px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .denda-search-input:focus {
+        border-color: #017af3;
+        box-shadow: 0 0 0 4px rgba(42, 246, 1, 0.1);
+    }
+
+    .denda-search-input::placeholder {
+        color: #9ca3af;
+    }
+
+    /* Table Container */
+    .denda-table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease 0.3s both;
+    }
+
+    /* Desktop Table */
+    .denda-table-desktop {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .denda-table-desktop thead {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .denda-table-desktop thead th {
+        padding: 18px 16px;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .denda-table-desktop tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+        animation: fadeInRow 0.5s ease both;
+    }
+
+    @keyframes fadeInRow {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .denda-table-desktop tbody tr:hover {
+        background-color: #fef2f2;
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .denda-table-desktop tbody td {
+        padding: 16px;
+        color: #4a5568;
+        font-size: 14px;
+    }
+
+    .denda-table-desktop tbody td:first-child {
+        font-weight: 700;
+        color: #ef4444;
+    }
+
+    .denda-kolom-nama {
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    /* Badges */
+    .denda-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .denda-badge-manual {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
+
+    .denda-badge-absensi {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+
+    .denda-badge-belum {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .denda-badge-lunas {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .denda-badge-manual::before { content: '✏️'; }
+    .denda-badge-absensi::before { content: '⏰'; }
+    .denda-badge-belum::before { content: '❌'; }
+    .denda-badge-lunas::before { content: '✅'; }
+
+    /* Action Buttons */
+    .denda-action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .denda-btn-action {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .denda-btn-edit {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .denda-btn-edit:hover {
+        background: #d97706;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+
+    .denda-btn-delete {
+        background: #ef4444;
+        color: white;
+    }
+
+    .denda-btn-delete:hover {
+        background: #dc2626;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Mobile Cards */
+    .denda-mobile-cards {
+        display: none;
+    }
+
+    .denda-mobile-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        transition: all 0.3s ease;
+        border-left: 4px solid #ef4444;
+        animation: fadeInUp 0.5s ease both;
+    }
+
+    .denda-mobile-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .denda-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .denda-card-nama {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .denda-card-nama::before {
+        content: '👤';
+        font-size: 20px;
+    }
+
+    .denda-card-no {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .denda-card-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .denda-info-item {
+        background: #f9fafb;
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .denda-info-label {
+        font-size: 11px;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .denda-info-value {
+        font-size: 14px;
+        color: #2d3748;
+        font-weight: 600;
+    }
+
+    .denda-card-alasan {
+        background: #fef2f2;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        border-left: 3px solid #ef4444;
+    }
+
+    .denda-card-alasan-label {
+        font-size: 11px;
+        color: #991b1b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+
+    .denda-card-alasan-text {
+        color: #7f1d1d;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .denda-card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .denda-card-actions .denda-btn-action {
+        justify-content: center;
+    }
+
+    /* Empty State */
+    .denda-empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .denda-empty-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .denda-empty-text {
+        color: #6b7280;
+        font-size: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .denda-page-wrapper {
+            padding: 16px;
+        }
+
+        .denda-header-section {
+            padding: 24px 20px;
+        }
+
+        .denda-header-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .denda-header-section h3 {
+            font-size: 22px;
+            justify-content: center;
+        }
+
+        .denda-btn-add {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .denda-table-desktop {
+            display: none;
+        }
+
+        .denda-mobile-cards {
+            display: block;
+        }
+
+        .denda-search-box {
+            padding: 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .denda-card-info {
+            grid-template-columns: 1fr;
+        }
+
+        .denda-card-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+

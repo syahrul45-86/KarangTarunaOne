@@ -1,0 +1,419 @@
+
+    .arisan-page-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Header Section */
+    .arisan-page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .arisan-page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .arisan-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .arisan-page-header h3 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .arisan-page-header h3 span:first-child {
+        font-size: 32px;
+    }
+
+    .arisan-btn-add {
+        background: white;
+        color: #667eea;
+        padding: 12px 24px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .arisan-btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        color: #667eea;
+    }
+
+    .arisan-btn-add i {
+        font-size: 16px;
+    }
+
+    /* Alerts */
+    .arisan-alert {
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        animation: slideInDown 0.4s ease;
+    }
+
+    .arisan-alert-success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+
+    .arisan-alert-danger {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Data Card */
+    .arisan-data-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+    }
+
+    .arisan-card-body {
+        padding: 0;
+    }
+
+    /* Desktop Table */
+    .arisan-table-container {
+        overflow-x: auto;
+    }
+
+    .arisan-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .arisan-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .arisan-table thead th {
+        padding: 18px 16px;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .arisan-table tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.2s ease;
+    }
+
+    .arisan-table tbody tr:hover {
+        background-color: #f8f9ff;
+        transform: scale(1.01);
+    }
+
+    .arisan-table tbody td {
+        padding: 20px 16px;
+        color: #4a5568;
+        font-size: 14px;
+    }
+
+    .arisan-no-column {
+        font-weight: 700;
+        color: #667eea;
+        font-size: 16px;
+    }
+
+    .arisan-tahun-column {
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .arisan-tahun-column::before {
+        content: '📅';
+        font-size: 24px;
+    }
+
+    .arisan-count-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .arisan-count-badge::before {
+        content: '📋';
+    }
+
+    /* Action Buttons */
+    .arisan-action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .arisan-btn-action {
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .arisan-btn-action i {
+        font-size: 14px;
+    }
+
+    .arisan-btn-view {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .arisan-btn-view:hover {
+        background: #2563eb;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .arisan-btn-delete {
+        background: #ef4444;
+        color: white;
+    }
+
+    .arisan-btn-delete:hover {
+        background: #dc2626;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Empty State */
+    .arisan-empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .arisan-empty-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .arisan-empty-text {
+        color: #4a5568;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .arisan-empty-text small {
+        color: #a0aec0;
+        font-size: 14px;
+    }
+
+    /* Mobile Card View */
+    .arisan-mobile-cards {
+        display: none;
+    }
+
+    .arisan-mobile-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .arisan-mobile-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+
+    .arisan-mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .arisan-mobile-tahun {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .arisan-mobile-no {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .arisan-mobile-info {
+        margin-bottom: 16px;
+    }
+
+    .arisan-mobile-info-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: #f8f9ff;
+        border-radius: 10px;
+    }
+
+    .arisan-mobile-info-row span:first-child {
+        font-size: 20px;
+    }
+
+    .arisan-mobile-info-label {
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 13px;
+    }
+
+    .arisan-mobile-info-value {
+        color: #2d3748;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .arisan-mobile-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .arisan-mobile-actions .arisan-btn-action {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .arisan-page-container {
+            padding: 16px;
+        }
+
+        .arisan-page-header {
+            padding: 24px 20px;
+        }
+
+        .arisan-header-content {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .arisan-page-header h3 {
+            font-size: 24px;
+            justify-content: center;
+        }
+
+        .arisan-btn-add {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .arisan-table-container {
+            display: none;
+        }
+
+        .arisan-mobile-cards {
+            display: block;
+            padding: 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .arisan-page-header h3 {
+            font-size: 20px;
+        }
+
+        .arisan-mobile-tahun {
+            font-size: 20px;
+        }
+    }
+
