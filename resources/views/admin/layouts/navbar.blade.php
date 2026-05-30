@@ -372,7 +372,9 @@
             <div class="admin-nav-item">
                 <button class="admin-nav-icon-btn" id="adminNotifBtn">
                     <i class="fas fa-bell"></i>
-                    <span class="admin-badge-counter">3</span>
+                    @if(count($notifications) > 0)
+                    <span class="admin-badge-counter">{{ count($notifications) }}</span>
+                    @endif
                 </button>
 
                 <!-- Notifications Dropdown -->
@@ -381,35 +383,21 @@
                         Notifikasi Terbaru
                     </div>
                     <div>
+                        @forelse($notifications as $notif)
                         <div class="admin-notif-item">
-                            <div class="admin-notif-icon primary">
-                                <i class="fas fa-user-plus"></i>
+                            <div class="admin-notif-icon {{ $notif->icon_bg }}">
+                                <i class="{{ $notif->icon }}"></i>
                             </div>
                             <div class="admin-notif-content">
-                                <div class="admin-notif-date">Hari ini, 10:30</div>
-                                <div class="admin-notif-text">Anggota baru telah bergabung dengan RT</div>
+                                <div class="admin-notif-date">{{ $notif->date }}</div>
+                                <div class="admin-notif-text">{{ $notif->text }}</div>
                             </div>
                         </div>
-
-                        <div class="admin-notif-item">
-                            <div class="admin-notif-icon success">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="admin-notif-content">
-                                <div class="admin-notif-date">Kemarin, 15:45</div>
-                                <div class="admin-notif-text">Pembayaran arisan bulan ini telah lunas</div>
-                            </div>
+                        @empty
+                        <div class="admin-notif-item justify-content-center text-muted" style="padding: 15px; text-align: center;">
+                            Belum ada notifikasi
                         </div>
-
-                        <div class="admin-notif-item">
-                            <div class="admin-notif-icon warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="admin-notif-content">
-                                <div class="admin-notif-date">2 hari lalu</div>
-                                <div class="admin-notif-text">Ada 5 anggota dengan denda tertunggak</div>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                     <div class="admin-dropdown-footer">
                         <a href="#">Lihat Semua Notifikasi</a>

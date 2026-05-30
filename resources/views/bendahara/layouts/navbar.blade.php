@@ -1,219 +1,521 @@
-<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+<style>
+    /* Scoped Navbar Styles for Admin */
+    .bendahara-navbar-wrapper {
+        background: white;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        padding: 0;
+        margin-bottom: 30px;
+    }
 
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+    .bendahara-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 30px;
+        background: white;
+    }
 
-                    <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search ..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
+    .bendahara-topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .bendahara-sidebar-toggle {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #64748b;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .bendahara-sidebar-toggle:hover {
+        background: #f1f5f9;
+        color: #3b82f6;
+    }
+
+    .bendahara-search-box {
+        position: relative;
+        display: none;
+    }
+
+    .bendahara-search-input {
+        width: 350px;
+        padding: 10px 45px 10px 45px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .bendahara-search-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .bendahara-search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+    }
+
+    .bendahara-topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .bendahara-nav-item {
+        position: relative;
+    }
+
+    .bendahara-nav-icon-btn {
+        background: none;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .bendahara-nav-icon-btn:hover {
+        background: #f1f5f9;
+        color: #3b82f6;
+    }
+
+    .bendahara-badge-counter {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ef4444;
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 18px;
+        text-align: center;
+    }
+
+    .bendahara-divider {
+        width: 1px;
+        height: 30px;
+        background: #e2e8f0;
+    }
+
+    .bendahara-user-menu {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .bendahara-user-menu:hover {
+        background: #f1f5f9;
+    }
+
+    .bendahara-user-info {
+        text-align: right;
+    }
+
+    .bendahara-user-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        display: block;
+        line-height: 1.2;
+    }
+
+    .bendahara-user-role {
+        font-size: 12px;
+        color: #64748b;
+        display: block;
+    }
+
+    .bendahara-user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e2e8f0;
+    }
+
+    /* Dropdown Styles */
+    .bendahara-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        min-width: 280px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .bendahara-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .bendahara-dropdown-header {
+        padding: 15px 20px;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.5px;
+    }
+
+    .bendahara-dropdown-item {
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #475569;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+    }
+
+    .bendahara-dropdown-item:hover {
+        background: #f8fafc;
+        border-left-color: #3b82f6;
+        color: #3b82f6;
+        text-decoration: none;
+    }
+
+    .bendahara-dropdown-item i {
+        width: 20px;
+        text-align: center;
+        color: #94a3b8;
+    }
+
+    .bendahara-dropdown-item:hover i {
+        color: #3b82f6;
+    }
+
+    .bendahara-dropdown-divider {
+        height: 1px;
+        background: #e2e8f0;
+        margin: 8px 0;
+    }
+
+    .bendahara-dropdown-footer {
+        padding: 12px 20px;
+        text-align: center;
+    }
+
+    .bendahara-dropdown-footer a {
+        color: #3b82f6;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .bendahara-dropdown-footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Notification Item */
+    .bendahara-notif-item {
+        padding: 15px 20px;
+        display: flex;
+        gap: 12px;
+        border-left: 3px solid transparent;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .bendahara-notif-item:hover {
+        background: #f8fafc;
+        border-left-color: #3b82f6;
+    }
+
+    .bendahara-notif-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .bendahara-notif-icon.primary {
+        background: #dbeafe;
+        color: #3b82f6;
+    }
+
+    .bendahara-notif-icon.success {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .bendahara-notif-icon.warning {
+        background: #fef3c7;
+        color: #f59e0b;
+    }
+
+    .bendahara-notif-content {
+        flex: 1;
+    }
+
+    .bendahara-notif-date {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-bottom: 4px;
+    }
+
+    .bendahara-notif-text {
+        font-size: 13px;
+        color: #475569;
+        line-height: 1.4;
+    }
+
+    /* Mobile Search */
+    .bendahara-mobile-search {
+        display: none;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+        .bendahara-search-box {
+            display: block;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .bendahara-topbar {
+            padding: 12px 15px;
+        }
+
+        .bendahara-user-info {
+            display: none;
+        }
+
+        .bendahara-mobile-search {
+            display: block;
+        }
+
+        .bendahara-dropdown {
+            min-width: 250px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .bendahara-topbar-right {
+            gap: 8px;
+        }
+
+        .bendahara-nav-icon-btn {
+            width: 36px;
+            height: 36px;
+        }
+
+        .bendahara-dropdown {
+            right: -10px;
+            min-width: 280px;
+            max-width: calc(100vw - 30px);
+        }
+    }
+</style>
+
+<nav class="bendahara-navbar-wrapper">
+    <div class="bendahara-topbar">
+        <!-- Left Side -->
+        <div class="bendahara-topbar-left">
+            <!-- Sidebar Toggle -->
+            <button id="bendaharaSidebarToggle" class="bendahara-sidebar-toggle d-md-none">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Search Box (Desktop) -->
+            <div class="bendahara-search-box">
+                <i class="fas fa-search bendahara-search-icon"></i>
+                <input type="text"
+                       class="bendahara-search-input"
+                       placeholder="Cari anggota, kegiatan, atau transaksi...">
+            </div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="bendahara-topbar-right">
+            <!-- Mobile Search Icon -->
+            <div class="bendahara-mobile-search bendahara-nav-item">
+                <button class="bendahara-nav-icon-btn" id="bendaharaMobileSearchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Notifications -->
+            <div class="bendahara-nav-item">
+                <button class="bendahara-nav-icon-btn" id="bendaharaNotifBtn">
+                    <i class="fas fa-bell"></i>
+                    @if(count($notifications) > 0)
+                    <span class="bendahara-badge-counter">{{ count($notifications) }}</span>
+                    @endif
+                </button>
+
+                <!-- Notifications Dropdown -->
+                <div class="bendahara-dropdown" id="bendaharaNotifDropdown">
+                    <div class="bendahara-dropdown-header">
+                        Notifikasi Terbaru
+                    </div>
+                    <div>
+                        @forelse($notifications as $notif)
+                        <div class="bendahara-notif-item">
+                            <div class="bendahara-notif-icon {{ $notif->icon_bg }}">
+                                <i class="{{ $notif->icon }}"></i>
+                            </div>
+                            <div class="bendahara-notif-content">
+                                <div class="bendahara-notif-date">{{ $notif->date }}</div>
+                                <div class="bendahara-notif-text">{{ $notif->text }}</div>
                             </div>
                         </div>
+                        @empty
+                        <div class="bendahara-notif-item justify-content-center text-muted" style="padding: 15px; text-align: center;">
+                            Belum ada notifikasi
+                        </div>
+                        @endforelse
+                    </div>
+                    <div class="bendahara-dropdown-footer">
+                        <a href="#">Lihat Semua Notifikasi</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="bendahara-divider d-none d-md-block"></div>
+
+            <!-- User Menu -->
+            <div class="bendahara-nav-item">
+                <div class="bendahara-user-menu" id="bendaharaUserMenuBtn">
+                    <div class="bendahara-user-info">
+                        <span class="bendahara-user-name">{{ Auth::user()->name }}</span>
+                        <span class="bendahara-user-role">Bendahara</span>
+                    </div>
+                    <img class="bendahara-user-avatar"
+                         src="{{ Auth::user()->image
+                                 ? asset('storage/' . Auth::user()->image)
+                                 : asset('template/img/undraw_profile.svg') }}"
+                         alt="User Avatar">
+                </div>
+
+                <!-- User Dropdown -->
+                <div class="bendahara-dropdown" id="bendaharaUserDropdown">
+                    <div class="bendahara-dropdown-header">
+                        Akun Saya
+                    </div>
+                    <a class="bendahara-dropdown-item" href="{{ route('bendahara.profile.index') }}">
+                        <i class="fas fa-user"></i>
+                        <span>Profil Saya</span>
+                    </a>
+                    
+                    <div class="bendahara-dropdown-divider"></div>
+                    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                        @csrf
+                        <button type="submit" class="bendahara-dropdown-item" style="width: 100%; border: none; background: none; text-align: left;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
+<script>
+(function() {
+    'use strict';
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
+    // DOM Elements
+    const elements = {
+        sidebarToggle: document.getElementById('bendaharaSidebarToggle'),
+        notifBtn: document.getElementById('bendaharaNotifBtn'),
+        notifDropdown: document.getElementById('bendaharaNotifDropdown'),
+        userMenuBtn: document.getElementById('bendaharaUserMenuBtn'),
+        userDropdown: document.getElementById('bendaharaUserDropdown')
+    };
 
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>
+    // Toggle Dropdown
+    function toggleDropdown(dropdown, button) {
+        const isActive = dropdown.classList.contains('active');
 
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
+        // Close all dropdowns
+        document.querySelectorAll('.bendahara-dropdown').forEach(d => {
+            d.classList.remove('active');
+        });
 
-                        <div class="topbar-divider d-none d-sm-block"></div>
+        // Open this dropdown if it was closed
+        if (!isActive) {
+            dropdown.classList.add('active');
+        }
+    }
 
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    // Close dropdown when clicking outside
+    function handleClickOutside(e) {
+        if (!e.target.closest('.bendahara-nav-item')) {
+            document.querySelectorAll('.bendahara-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+        }
+    }
 
-                                {{-- Nama user login --}}
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                    {{ Auth::user()->name }}
-                                </span>
+    // Event Listeners
+    if (elements.notifBtn && elements.notifDropdown) {
+        elements.notifBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown(elements.notifDropdown, elements.notifBtn);
+        });
+    }
 
-                                {{-- Foto profil --}}
-                                <img class="img-profile rounded-circle"
-                                    src="{{ Auth::user()->image
-                                            ? asset('storage/' . Auth::user()->image)
-                                            : asset('template/img/undraw_profile.svg') }}">
-                            </a>
+    if (elements.userMenuBtn && elements.userDropdown) {
+        elements.userMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown(elements.userDropdown, elements.userMenuBtn);
+        });
+    }
 
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', handleClickOutside);
 
-                                <a class="dropdown-item" href="{{ route('bendahara.profile.index') }}">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
+    // Sidebar Toggle (if you have sidebar)
+    if (elements.sidebarToggle) {
+        elements.sidebarToggle.addEventListener('click', function() {
+            document.body.classList.toggle('sidebar-toggled');
+            document.querySelector('.sidebar')?.classList.toggle('toggled');
+        });
+    }
 
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
-
-                                <div class="dropdown-divider"></div>
-
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
-
-                        </li>
-
-                    </ul>
-
-                </nav>
+    // Close dropdown on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.bendahara-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+        }
+    });
+})();
+</script>
