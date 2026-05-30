@@ -443,6 +443,52 @@
         </div>
     </div>
 
+    <!-- Tunggakan & Denda Stats -->
+    <h4 class="mb-3 font-weight-bold text-gray-800" style="margin-top: 10px;"><i class="fas fa-file-invoice-dollar text-danger"></i> Ringkasan Denda & Tunggakan (Pribadi)</h4>
+    <div class="admin-stats-row">
+        <!-- Denda Kegiatan -->
+        <div class="admin-stat-card admin-card-warning">
+            <div class="admin-stat-header">
+                <div class="admin-stat-content">
+                    <div class="admin-stat-label">🎯 Denda Kegiatan (Belum Bayar)</div>
+                    <div class="admin-stat-value" style="font-size: 22px;">Rp {{ number_format($dendaBelumBayarPribadi, 0, ',', '.') }}</div>
+                    <div class="admin-stat-subtitle">Total denda kegiatan Anda</div>
+                </div>
+                <div class="admin-stat-icon" style="background: #fffbeb; color: #f59e0b;">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tunggakan Arisan -->
+        <div class="admin-stat-card admin-card-info">
+            <div class="admin-stat-header">
+                <div class="admin-stat-content">
+                    <div class="admin-stat-label">💰 Tunggakan Arisan</div>
+                    <div class="admin-stat-value" style="font-size: 22px;">Rp {{ number_format($tunggakanArisanPribadi, 0, ',', '.') }}</div>
+                    <div class="admin-stat-subtitle">Total tunggakan arisan Anda</div>
+                </div>
+                <div class="admin-stat-icon" style="background: #cffafe; color: #0891b2;">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Denda Keseluruhan -->
+        <div class="admin-stat-card admin-card-danger">
+            <div class="admin-stat-header">
+                <div class="admin-stat-content">
+                    <div class="admin-stat-label">🚨 Denda Keseluruhan</div>
+                    <div class="admin-stat-value" style="font-size: 22px;">Rp {{ number_format($totalDendaKeseluruhanPribadi, 0, ',', '.') }}</div>
+                    <div class="admin-stat-subtitle">Total Denda Kegiatan + Arisan Anda</div>
+                </div>
+                <div class="admin-stat-icon" style="background: #fee2e2; color: #dc2626;">
+                    <i class="fas fa-calculator"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="admin-section">
         <h2 class="admin-section-title">

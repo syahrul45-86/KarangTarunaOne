@@ -135,6 +135,26 @@ class CatatanArisanController extends Controller
     }
 
     /* =============================
+        HAPUS TAHUN
+    ==============================*/
+    public function deleteTahun($id)
+    {
+        $tahun = ArisanTahun::find($id);
+
+        if (!$tahun) {
+            return back()->with('error', 'Tahun tidak ditemukan!');
+        }
+
+        // Hapus juga semua tanggal yang berkaitan (beserta catatan arisannya jika on cascade belum diset)
+        $tanggalIds = $tahun->tanggal()->pluck('id')->toArray();
+        CatatanArisan::whereIn('tanggal_id', $tanggalIds)->delete();
+        $tahun->tanggal()->delete();
+        $tahun->delete();
+
+        return back()->with('success', 'Tahun arisan beserta seluruh isinya berhasil dihapus!');
+    }
+
+    /* =============================
         REKAP ARISAN KESELURUHAN
     ==============================*/
     public function recap()

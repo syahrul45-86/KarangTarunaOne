@@ -363,6 +363,18 @@ class TambahAnggotaController extends Controller
                 Storage::disk('public')->delete($user->qr_code);
             }
 
+            // Hapus data terkait sebelum menghapus user (Manual Cascade)
+            \App\Models\Denda::where('user_id', $user->id)->delete();
+            \App\Models\CatatanArisan::where('user_id', $user->id)->delete();
+            \App\Models\Absensi::where('user_id', $user->id)->delete();
+            \App\Models\Kas::where('user_id', $user->id)->delete();
+            if (class_exists(\App\Models\IzinAbsensi::class)) {
+                \App\Models\IzinAbsensi::where('user_id', $user->id)->delete();
+            }
+            if (class_exists(\App\Models\AbsensiAdmin::class)) {
+                \App\Models\AbsensiAdmin::where('user_id', $user->id)->delete();
+            }
+
             $user->delete();
             return back()->with('success', ucfirst($user->role) . ' berhasil dihapus.');
         }

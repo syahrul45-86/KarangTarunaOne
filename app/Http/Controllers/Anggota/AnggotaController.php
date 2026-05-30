@@ -73,8 +73,10 @@ class AnggotaController extends Controller
         $settingRT   = SettingRT::where('rt_id', $rt_id)->first();
         $iuranArisan = $settingRT->iuran_arisan ?? 0;
 
-        // Hitung Tunggakan Arisan (Seluruh tahun, yang belum dibayar)
-        $allDates = ArisanTanggal::orderBy('tanggal', 'desc')->get();
+        // Hitung Tunggakan Arisan (Seluruh tahun, yang belum dibayar, sejak user dibuat)
+        $allDates = ArisanTanggal::where('tanggal', '>=', $anggota->created_at->startOfMonth())
+          ->orderBy('tanggal', 'desc')->get();
+          
         $paidDatesIds = CatatanArisan::where('user_id', $anggota->id)->pluck('tanggal_id')->toArray();
         
         $tunggakanArisanList = $allDates->filter(function($date) use ($paidDatesIds) {
@@ -101,6 +103,11 @@ class AnggotaController extends Controller
         // ============================================
         // Setting sudah dipindah ke atas
 
+        // ============================================
+        // 5. TOTAL KESELURUHAN (DENDA + TUNGGAKAN ARISAN PRIBADI)
+        // ============================================
+        $totalDendaKeseluruhan = $dendaBelumBayar + $totalNominalTunggakanArisan;
+
         return view('anggota.dashboard', compact(
             'anggota',
             // Absensi
@@ -123,6 +130,8 @@ class AnggotaController extends Controller
             // Tunggakan Arisan
             'tunggakanArisanList',
             'totalNominalTunggakanArisan',
+            // Total Keseluruhan
+            'totalDendaKeseluruhan',
             // Setting
             'iuranArisan'
         ));

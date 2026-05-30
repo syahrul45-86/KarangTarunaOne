@@ -123,30 +123,45 @@ class BendaharaController extends Controller
         $settingRT = SettingRT::where('rt_id', $rt_id)->first();
         $iuranArisan = $settingRT->iuran_arisan ?? 0;
 
-        $allDatesCount = ArisanTanggal::count();
+        $totalNominalTunggakanArisan = 0;
         $members = User::where('rt_id', $rt_id)->whereIn('role', ['anggota', 'sekretaris', 'bendahara'])->get();
-        $totalExpectedArisan = $members->count() * $allDatesCount;
-
-        $totalPaidArisan = CatatanArisan::whereHas('user', function($q) use ($rt_id) {
-            $q->where('rt_id', $rt_id);
-        })->count();
-
-        $totalUnpaidCountArisan = max(0, $totalExpectedArisan - $totalPaidArisan);
-        $totalNominalTunggakanArisan = $totalUnpaidCountArisan * $iuranArisan;
-
-        // Top 5 Anggota Penunggak Arisan
         $usersWithTunggakan = [];
+
         foreach ($members as $member) {
-            $paidCount = CatatanArisan::where('user_id', $member->id)->count();
-            $unpaidCount = $allDatesCount - $paidCount;
-            if ($unpaidCount > 0) {
+            $expectedForMember = ArisanTanggal::where('tanggal', '>=', $member->created_at->startOfMonth())->count();
+            
+            $paidForMember = CatatanArisan::where('user_id', $member->id)->count();
+            $unpaidForMember = max(0, $expectedForMember - $paidForMember);
+            
+            $nominalUnpaid = $unpaidForMember * $iuranArisan;
+            $totalNominalTunggakanArisan += $nominalUnpaid;
+
+            if ($unpaidForMember > 0) {
                 $usersWithTunggakan[] = (object)[
                     'user' => $member,
-                    'unpaid_count' => $unpaidCount,
-                    'nominal' => $unpaidCount * $iuranArisan
+                    'unpaid_count' => $unpaidForMember,
+                    'nominal' => $nominalUnpaid
                 ];
             }
         }
+
+        // ==========================================
+        // 5.6 STATISTIK DENDA & TUNGGAKAN PRIBADI (BENDAHARA)
+        // ==========================================
+        $bendaharaUser = auth()->user();
+        
+        $dendaBelumBayarPribadi = Denda::where('user_id', $bendaharaUser->id)
+            ->where('status', 'belum_bayar')
+            ->sum('jumlah_denda');
+
+        $expectedForBendahara = ArisanTanggal::where('tanggal', '>=', $bendaharaUser->created_at->startOfMonth())->count();
+        $paidForBendahara = CatatanArisan::where('user_id', $bendaharaUser->id)->count();
+        $unpaidForBendahara = max(0, $expectedForBendahara - $paidForBendahara);
+        
+        $tunggakanArisanPribadi = $unpaidForBendahara * $iuranArisan;
+        $totalDendaKeseluruhanPribadi = $dendaBelumBayarPribadi + $tunggakanArisanPribadi;
+
+        // Top 5 Anggota Penunggak Arisan
         usort($usersWithTunggakan, function($a, $b) {
             return $b->unpaid_count <=> $a->unpaid_count;
         });
@@ -160,6 +175,11 @@ class BendaharaController extends Controller
         if ($saldoBulanLalu > 0) {
             $perubahanKas = (($totalKas - $saldoBulanLalu) / $saldoBulanLalu) * 100;
         }
+
+        // ==========================================
+        // 7. TOTAL KESELURUHAN (DENDA KEGIATAN + ARISAN)
+        // ==========================================
+        $totalDendaKeseluruhan = $totalDendaTertunggak + $totalNominalTunggakanArisan;
 
         return view('bendahara.dashboard', compact(
             'bendahara',
@@ -177,8 +197,13 @@ class BendaharaController extends Controller
             'kegiatan',
             'transaksiTerbaru',
             'dendaTertunggak',
-            'totalNominalTunggakanArisan',
             'topTunggakanArisan',
+            'iuranArisan',
+            'totalNominalTunggakanArisan',
+            'dendaBelumBayarPribadi',
+            'tunggakanArisanPribadi',
+            'totalDendaKeseluruhanPribadi',
+            'totalDendaKeseluruhan',
             'perubahanKas'
         ));
     }

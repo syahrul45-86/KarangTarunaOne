@@ -64,4 +64,12 @@ class SettingRTController extends Controller
 
         return back()->with('success', 'Pengaturan RT berhasil disimpan.');
     }
+
+    /** ============================
+     *  ALIAS UNTUK UPDATE PENGATURAN
+     * ============================ */
+    public function update(Request $request)
+    {
+        return $this->save($request);
+    }
 }

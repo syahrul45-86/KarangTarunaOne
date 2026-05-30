@@ -15,6 +15,7 @@ class Denda extends Model
         'user_id',
         'form_id',
         'jenis',
+        'alasan',
         'jumlah_denda',
         'status',
     ];

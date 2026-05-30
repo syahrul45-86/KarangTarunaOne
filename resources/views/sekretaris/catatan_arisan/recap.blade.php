@@ -202,7 +202,7 @@
                             Swal.showLoading();
                         }
                     });
-                    form.submit();
+                    form[0].submit();
                 }
             });
         });

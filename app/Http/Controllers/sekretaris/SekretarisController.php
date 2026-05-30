@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\Absensi;
 use App\Models\AbsensiForm;
 use App\Models\Denda;
+use App\Models\SettingRT;
+use App\Models\ArisanTanggal;
+use App\Models\CatatanArisan;
 use Carbon\Carbon;
 
 class SekretarisController extends Controller
@@ -66,6 +69,49 @@ class SekretarisController extends Controller
             }
         }
 
+        // ==========================================
+        // STATISTIK DENDA & TUNGGAKAN ARISAN (GLOBAL RT)
+        // ==========================================
+        // 1. Denda Kegiatan
+        $dendaBelumBayar = Denda::whereHas('user', function($q) use ($rt_id) {
+            $q->where('rt_id', $rt_id);
+        })->where('status', 'belum_bayar')->sum('jumlah_denda') ?? 0;
+
+        // 2. Tunggakan Arisan
+        $settingRT = SettingRT::where('rt_id', $rt_id)->first();
+        $iuranArisan = $settingRT->iuran_arisan ?? 0;
+
+        $totalNominalTunggakanArisan = 0;
+        $members = User::where('rt_id', $rt_id)->whereIn('role', ['admin', 'anggota', 'sekretaris', 'bendahara'])->get();
+
+        foreach ($members as $member) {
+            $expectedForMember = ArisanTanggal::where('tanggal', '>=', $member->created_at->startOfMonth())->count();
+            
+            $paidForMember = CatatanArisan::where('user_id', $member->id)->count();
+            $unpaidForMember = max(0, $expectedForMember - $paidForMember);
+            
+            $totalNominalTunggakanArisan += ($unpaidForMember * $iuranArisan);
+        }
+
+        // 3. Total Keseluruhan
+        $totalDendaKeseluruhan = $dendaBelumBayar + $totalNominalTunggakanArisan;
+
+        // ==========================================
+        // 4. STATISTIK DENDA & TUNGGAKAN PRIBADI (SEKRETARIS)
+        // ==========================================
+        $sekretarisUser = auth()->user();
+        
+        $dendaBelumBayarPribadi = Denda::where('user_id', $sekretarisUser->id)
+            ->where('status', 'belum_bayar')
+            ->sum('jumlah_denda');
+
+        $expectedForSekretaris = ArisanTanggal::where('tanggal', '>=', $sekretarisUser->created_at->startOfMonth())->count();
+        $paidForSekretaris = CatatanArisan::where('user_id', $sekretarisUser->id)->count();
+        $unpaidForSekretaris = max(0, $expectedForSekretaris - $paidForSekretaris);
+        
+        $tunggakanArisanPribadi = $unpaidForSekretaris * $iuranArisan;
+        $totalDendaKeseluruhanPribadi = $dendaBelumBayarPribadi + $tunggakanArisanPribadi;
+
         return view('sekretaris.dashboard', compact(
             'sekretaris', 
             'totalAnggota', 
@@ -73,7 +119,13 @@ class SekretarisController extends Controller
             'recentAttendance', 
             'averageAttendance',
             'recentForms',
-            'absenTerakhir'
+            'absenTerakhir',
+            'dendaBelumBayar',
+            'totalNominalTunggakanArisan',
+            'totalDendaKeseluruhan',
+            'dendaBelumBayarPribadi',
+            'tunggakanArisanPribadi',
+            'totalDendaKeseluruhanPribadi'
         ));
     }
 }

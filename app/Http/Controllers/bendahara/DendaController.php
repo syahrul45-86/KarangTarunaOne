@@ -34,8 +34,9 @@ class DendaController extends Controller
         foreach ($users as $u) {
             $belum = Denda::where('user_id', $u->id)->where('status', 'belum_bayar')->sum('jumlah_denda');
 
+            $expectedForUser = ArisanTanggal::where('tanggal', '>=', $u->created_at->startOfMonth())->count();
             $paidCount = CatatanArisan::where('user_id', $u->id)->count();
-            $unpaidCount = max(0, $allDatesCount - $paidCount);
+            $unpaidCount = max(0, $expectedForUser - $paidCount);
             $tunggakanArisan = $unpaidCount * $iuranArisan;
 
             $data[] = [
@@ -47,6 +48,42 @@ class DendaController extends Controller
         }
 
         return view('bendahara.denda.index', compact('data', 'search'));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $bendahara = auth()->user();
+        $search = $request->search;
+
+        $users = User::where('rt_id', $bendahara->rt_id)
+            ->when($search, function($query) use ($search) {
+                $query->where('name', 'LIKE', "%$search%");
+            })
+            ->get();
+
+        $settingRT = SettingRT::where('rt_id', $bendahara->rt_id)->first();
+        $iuranArisan = $settingRT->iuran_arisan ?? 0;
+
+        $data = [];
+        foreach ($users as $u) {
+            $belum = Denda::where('user_id', $u->id)->where('status', 'belum_bayar')->sum('jumlah_denda');
+
+            $expectedForUser = ArisanTanggal::where('tanggal', '>=', $u->created_at->startOfMonth())->count();
+            $paidCount = CatatanArisan::where('user_id', $u->id)->count();
+            $unpaidCount = max(0, $expectedForUser - $paidCount);
+            $tunggakanArisan = $unpaidCount * $iuranArisan;
+
+            $data[] = [
+                'user' => $u,
+                'belum_bayar' => $belum,
+                'tunggakan_arisan' => $tunggakanArisan,
+                'total_semua' => $belum + $tunggakanArisan,
+            ];
+        }
+
+        $rt = \App\Models\Rt::find($bendahara->rt_id);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('bendahara.denda.pdf', compact('data', 'rt'));
+        return $pdf->download('Rekap_Tunggakan_RT.pdf');
     }
 
     // =========================

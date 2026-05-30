@@ -185,6 +185,7 @@ Route::middleware(['auth', 'role:bendahara'])->group( function() {
     // denda
 
     Route::get('/bendahara/denda', [DendaController::class, 'index'])->name('bendahara.denda.index');
+    Route::get('/bendahara/denda/export-pdf', [DendaController::class, 'exportPdf'])->name('bendahara.denda.export_pdf');
     Route::get('/bendahara/denda/create', [DendaController::class, 'create'])->name('bendahara.denda.create');
     Route::post('/bendahara/denda', [DendaController::class, 'store'])->name('bendahara.denda.store');
     Route::get('/bendahara/denda/{id}/edit', [DendaController::class, 'edit'])->name('bendahara.denda.edit');
@@ -287,6 +288,10 @@ Route::middleware(['auth', 'role:sekretaris'])->group(function(){
     // Hapus tanggal
     Route::delete('/arisan/tanggal/{id}/delete', [CatatanArisanController::class, 'deleteTanggal'])
         ->name('sekretaris.tanggal.delete');
+
+    // Hapus tahun
+    Route::delete('/arisan/tahun/{id}/delete', [CatatanArisanController::class, 'deleteTahun'])
+        ->name('sekretaris.tahun.delete');
 
     // Rekap Arisan Keseluruhan
     Route::get('/arisan/recap', [CatatanArisanController::class, 'recap'])

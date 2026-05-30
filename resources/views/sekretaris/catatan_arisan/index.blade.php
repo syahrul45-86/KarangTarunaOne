@@ -73,7 +73,7 @@
                                             <span>Lihat Detail</span>
                                         </a>
 
-                                        <form action="{{ route('sekretaris.tanggal.delete', $tahun->id) }}"
+                                        <form action="{{ route('sekretaris.tahun.delete', $tahun->id) }}"
                                               method="POST"
                                               style="display: inline;"
                                               onsubmit="return confirm('⚠️ Yakin hapus tahun ini?\n\nSemua tanggal dan checklist juga akan terhapus!')">
@@ -134,7 +134,7 @@
                                 <span>Lihat Detail</span>
                             </a>
 
-                            <form action="{{ route('sekretaris.tanggal.delete', $tahun->id) }}"
+                            <form action="{{ route('sekretaris.tahun.delete', $tahun->id) }}"
                                   method="POST"
                                   onsubmit="return confirm('⚠️ Yakin hapus tahun ini?\n\nSemua tanggal dan checklist juga akan terhapus!')">
                                 @csrf

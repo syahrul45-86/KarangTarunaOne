@@ -131,30 +131,45 @@ class AdminController extends Controller
         $dendaAbsensi = $settingRT->denda_absensi ?? 0;
         $dendaArisan = $settingRT->denda_arisan ?? 0;
 
-        $allDatesCount = ArisanTanggal::count();
+        $totalNominalTunggakanArisan = 0;
         $members = User::where('rt_id', $rt_id)->whereIn('role', ['admin', 'anggota', 'sekretaris', 'bendahara'])->get();
-        $totalExpectedArisan = $members->count() * $allDatesCount;
-        
-        $totalPaidArisan = CatatanArisan::whereHas('user', function($q) use ($rt_id) {
-            $q->where('rt_id', $rt_id);
-        })->count();
-
-        $totalUnpaidCountArisan = max(0, $totalExpectedArisan - $totalPaidArisan);
-        $totalNominalTunggakanArisan = $totalUnpaidCountArisan * $iuranArisan;
-
-        // Top 5 Anggota Penunggak Arisan
         $usersWithTunggakan = [];
+
         foreach ($members as $member) {
-            $paidCount = CatatanArisan::where('user_id', $member->id)->count();
-            $unpaidCount = $allDatesCount - $paidCount;
-            if ($unpaidCount > 0) {
+            $expectedForMember = ArisanTanggal::where('tanggal', '>=', $member->created_at->startOfMonth())->count();
+            
+            $paidForMember = CatatanArisan::where('user_id', $member->id)->count();
+            $unpaidForMember = max(0, $expectedForMember - $paidForMember);
+            
+            $nominalUnpaid = $unpaidForMember * $iuranArisan;
+            $totalNominalTunggakanArisan += $nominalUnpaid;
+
+            if ($unpaidForMember > 0) {
                 $usersWithTunggakan[] = (object)[
                     'user' => $member,
-                    'unpaid_count' => $unpaidCount,
-                    'nominal' => $unpaidCount * $iuranArisan
+                    'unpaid_count' => $unpaidForMember,
+                    'nominal' => $nominalUnpaid
                 ];
             }
         }
+
+        // ==========================================
+        // 4.6 STATISTIK DENDA & TUNGGAKAN PRIBADI (ADMIN)
+        // ==========================================
+        $adminUser = auth()->user();
+        
+        $dendaBelumBayarPribadi = Denda::where('user_id', $adminUser->id)
+            ->where('status', 'belum_bayar')
+            ->sum('jumlah_denda');
+
+        $expectedForAdmin = ArisanTanggal::where('tanggal', '>=', $adminUser->created_at->startOfMonth())->count();
+        $paidForAdmin = CatatanArisan::where('user_id', $adminUser->id)->count();
+        $unpaidForAdmin = max(0, $expectedForAdmin - $paidForAdmin);
+        
+        $tunggakanArisanPribadi = $unpaidForAdmin * $iuranArisan;
+        $totalDendaKeseluruhanPribadi = $dendaBelumBayarPribadi + $tunggakanArisanPribadi;
+
+        // Top 5 Anggota Penunggak Arisan
         usort($usersWithTunggakan, function($a, $b) {
             return $b->unpaid_count <=> $a->unpaid_count;
         });
@@ -216,6 +231,11 @@ class AdminController extends Controller
             ->get();
 
         // ==========================================
+        // 9. TOTAL KESELURUHAN (DENDA KEGIATAN + ARISAN)
+        // ==========================================
+        $totalDendaKeseluruhan = $dendaBelumBayar + $totalNominalTunggakanArisan;
+
+        // ==========================================
         // RETURN VIEW
         // ==========================================
         return view('admin.dashboard', compact(
@@ -242,12 +262,14 @@ class AdminController extends Controller
             'dendaLunas',
             'anggotaBermasalah',
             'dendaTertunggak',
-            // Tunggakan Arisan
+            'iuranArisan',
             'totalNominalTunggakanArisan',
             'topTunggakanArisan',
-            // Pengaturan
+            'dendaBelumBayarPribadi',
+            'tunggakanArisanPribadi',
+            'totalDendaKeseluruhanPribadi',
+            'totalDendaKeseluruhan',
             'settingRT',
-            'iuranArisan',
             'dendaAbsensi',
             'dendaArisan',
             // Additional Data

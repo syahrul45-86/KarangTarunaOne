@@ -475,6 +475,52 @@
 
     </div>
 
+    <!-- Tunggakan & Denda Stats -->
+    <h4 class="mb-3 font-weight-bold text-gray-800" style="margin-top: 10px;"><i class="fas fa-file-invoice-dollar text-danger"></i> Ringkasan Denda & Tunggakan (Pribadi)</h4>
+    <div class="anggota-stats-row">
+        <!-- Denda Kegiatan -->
+        <div class="anggota-stat-card anggota-card-warning">
+            <div class="anggota-stat-header">
+                <div class="anggota-stat-content">
+                    <div class="anggota-stat-label">🎯 Denda Kegiatan (Belum Bayar)</div>
+                    <div class="anggota-stat-value" style="font-size: 22px;">Rp {{ number_format($dendaBelumBayar, 0, ',', '.') }}</div>
+                    <div class="anggota-stat-subtitle">Total denda kegiatan Anda</div>
+                </div>
+                <div class="anggota-stat-icon" style="background: #fffbeb; color: #f59e0b;">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tunggakan Arisan -->
+        <div class="anggota-stat-card anggota-card-cyan">
+            <div class="anggota-stat-header">
+                <div class="anggota-stat-content">
+                    <div class="anggota-stat-label">💰 Tunggakan Arisan</div>
+                    <div class="anggota-stat-value" style="font-size: 22px;">Rp {{ number_format($totalNominalTunggakanArisan, 0, ',', '.') }}</div>
+                    <div class="anggota-stat-subtitle">Total tunggakan arisan Anda</div>
+                </div>
+                <div class="anggota-stat-icon" style="background: #cffafe; color: #0891b2;">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Denda Keseluruhan -->
+        <div class="anggota-stat-card anggota-card-danger">
+            <div class="anggota-stat-header">
+                <div class="anggota-stat-content">
+                    <div class="anggota-stat-label">🚨 Denda Keseluruhan</div>
+                    <div class="anggota-stat-value" style="font-size: 22px;">Rp {{ number_format($totalDendaKeseluruhan, 0, ',', '.') }}</div>
+                    <div class="anggota-stat-subtitle">Total Denda Kegiatan + Arisan</div>
+                </div>
+                <div class="anggota-stat-icon" style="background: #fee2e2; color: #dc2626;">
+                    <i class="fas fa-calculator"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="anggota-quick-actions">
         <h2 class="anggota-section-title">

@@ -347,18 +347,17 @@ class AbsensiController extends Controller
     {
         $form = AbsensiForm::findOrFail($id);
 
-        // Cek apakah ada absensi yang sudah tercatat
-        $jumlahAbsen = Absensi::where('form_id', $id)->count();
-
-        if ($jumlahAbsen > 0) {
-            return back()->with('error',
-                'Form absensi tidak dapat dihapus karena sudah ada ' . $jumlahAbsen . ' data absensi.'
-            );
+        // Hapus data terkait sebelum menghapus form absensi (Manual Cascade)
+        \App\Models\Absensi::where('form_id', $id)->delete();
+        \App\Models\Denda::where('form_id', $id)->delete();
+        
+        if (class_exists(\App\Models\IzinAbsensi::class)) {
+            \App\Models\IzinAbsensi::where('form_id', $id)->delete();
         }
 
         $form->delete();
 
-        return back()->with('success', 'Form absensi "' . $form->judul . '" berhasil dihapus!');
+        return back()->with('success', 'Form absensi "' . $form->judul . '" beserta seluruh data terkait berhasil dihapus!');
     }
     // =========================
     // LIST PERMINTAAN IZIN (SEKRETARIS)

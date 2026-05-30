@@ -11,6 +11,9 @@
 <div class="rekap-denda-container">
     <div class="rekap-denda-header">
         <h3>💰 Rekap Tunggakan (Denda & Arisan)</h3>
+        <a href="{{ route('bendahara.denda.export_pdf', request()->all()) }}" class="rekap-denda-btn rekap-denda-btn-primary">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </a>
     </div>
 
     <div class="rekap-denda-search-container">
@@ -38,7 +41,17 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php 
+                        $totalSemuaDenda = 0;
+                        $totalSemuaArisan = 0;
+                        $totalKeseluruhan = 0;
+                    @endphp
                     @forelse($data as $row)
+                    @php
+                        $totalSemuaDenda += $row['belum_bayar'];
+                        $totalSemuaArisan += $row['tunggakan_arisan'];
+                        $totalKeseluruhan += $row['total_semua'];
+                    @endphp
                     <tr>
                         <td data-label="Nama">
                             <span class="rekap-denda-nama">{{ $row['user']->name }}</span>
@@ -70,6 +83,14 @@
                     </tr>
                     @endforelse
                 </tbody>
+                <tfoot>
+                    <tr style="background-color: #f8fafc; font-weight: bold;">
+                        <td data-label="Keterangan" style="text-align: right; padding: 15px; border-top: 2px solid #e2e8f0; font-size: 16px;">TOTAL KESELURUHAN</td>
+                        <td data-label="Total Tunggakan Denda" style="padding: 15px; border-top: 2px solid #e2e8f0; color: #dc2626; font-size: 16px;">Rp {{ number_format($totalSemuaDenda, 0, ',', '.') }}</td>
+                        <td data-label="Total Tunggakan Arisan" style="padding: 15px; border-top: 2px solid #e2e8f0; color: #f59e0b; font-size: 16px;">Rp {{ number_format($totalSemuaArisan, 0, ',', '.') }}</td>
+                        <td data-label="Total Keseluruhan" style="padding: 15px; border-top: 2px solid #e2e8f0; color: #dc2626; font-size: 1.1em; font-size: 16px;">Rp {{ number_format($totalKeseluruhan, 0, ',', '.') }}</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>

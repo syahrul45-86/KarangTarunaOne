@@ -540,6 +540,52 @@
 
     </div>
 
+    <!-- Tunggakan & Denda Stats -->
+    <h4 class="mb-3 font-weight-bold text-gray-800" style="margin-top: 10px;"><i class="fas fa-file-invoice-dollar text-danger"></i> Ringkasan Denda & Tunggakan (Pribadi)</h4>
+    <div class="bendahara-stats-row">
+        <!-- Denda Kegiatan -->
+        <div class="bendahara-stat-card bendahara-card-warning">
+            <div class="bendahara-stat-header">
+                <div class="bendahara-stat-content">
+                    <div class="bendahara-stat-label">🎯 Denda Kegiatan (Belum Bayar)</div>
+                    <div class="bendahara-stat-value" style="font-size: 22px;">Rp {{ number_format($dendaBelumBayarPribadi, 0, ',', '.') }}</div>
+                    <div class="bendahara-stat-subtitle">Total denda kegiatan Anda</div>
+                </div>
+                <div class="bendahara-stat-icon" style="background: #fffbeb; color: #f59e0b;">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tunggakan Arisan -->
+        <div class="bendahara-stat-card bendahara-card-info">
+            <div class="bendahara-stat-header">
+                <div class="bendahara-stat-content">
+                    <div class="bendahara-stat-label">💰 Tunggakan Arisan</div>
+                    <div class="bendahara-stat-value" style="font-size: 22px;">Rp {{ number_format($tunggakanArisanPribadi, 0, ',', '.') }}</div>
+                    <div class="bendahara-stat-subtitle">Total tunggakan arisan Anda</div>
+                </div>
+                <div class="bendahara-stat-icon" style="background: #cffafe; color: #0891b2;">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Denda Keseluruhan -->
+        <div class="bendahara-stat-card bendahara-card-danger">
+            <div class="bendahara-stat-header">
+                <div class="bendahara-stat-content">
+                    <div class="bendahara-stat-label">🚨 Denda Keseluruhan</div>
+                    <div class="bendahara-stat-value" style="font-size: 22px;">Rp {{ number_format($totalDendaKeseluruhanPribadi, 0, ',', '.') }}</div>
+                    <div class="bendahara-stat-subtitle">Total Denda Kegiatan + Arisan Anda</div>
+                </div>
+                <div class="bendahara-stat-icon" style="background: #fee2e2; color: #dc2626;">
+                    <i class="fas fa-calculator"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="bendahara-quick-actions">
         <h2 class="bendahara-section-title">

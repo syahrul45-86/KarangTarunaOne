@@ -7,6 +7,7 @@ use App\Models\AbsensiForm;
 use App\Models\IzinAbsensi;
 use App\Models\Denda;
 use App\Models\CatatanArisan;
+use App\Models\ArisanTanggal;
 use Carbon\Carbon;
 
 class NavbarComposer
@@ -91,8 +92,28 @@ class NavbarComposer
                     ]);
                 }
             }
+
+            // 4. Notifikasi Arisan Tunggakan (Untuk setiap user)
+            $allDatesIds = ArisanTanggal::pluck('id')->toArray();
+            if (count($allDatesIds) > 0) {
+                $paidIds = CatatanArisan::where('user_id', $user->id)
+                                        ->where('sudah_bayar', true)
+                                        ->pluck('tanggal_id')
+                                        ->toArray();
+                $tunggakanArisan = count(array_diff($allDatesIds, $paidIds));
+
+                if ($tunggakanArisan > 0) {
+                    $notifications->push((object)[
+                        'icon' => 'fas fa-money-bill-wave',
+                        'icon_bg' => 'danger',
+                        'date' => 'Tagihan Arisan',
+                        'text' => 'Kamu memiliki tunggakan ' . $tunggakanArisan . ' sesi arisan'
+                    ]);
+                }
+            }
         }
 
         $view->with('notifications', $notifications->take(5));
     }
 }
+
