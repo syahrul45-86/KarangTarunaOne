@@ -11,8 +11,10 @@ class CatatanArisan extends Model
     protected $fillable = [
         'user_id',
         'tanggal_id',
-        'sudah_bayar'
+        'sudah_bayar',
+        'keterangan',
     ];
+
 
     // Relasi ke user/anggota
     public function user()

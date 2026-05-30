@@ -508,7 +508,7 @@
             <div class="admin-section">
                 <h2 class="admin-section-title">
                     <i class="fas fa-exclamation-circle"></i>
-                    Denda Tertunggak
+                    Denda Tertunggak (Absensi & Kegiatan)
                 </h2>
                 @if($dendaTertunggak->count() > 0)
                     @foreach($dendaTertunggak as $denda)
@@ -528,6 +528,40 @@
                     <div class="admin-empty-state">
                         <i class="fas fa-check-circle"></i>
                         <p>Tidak ada denda tertunggak</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Row Tunggakan Arisan -->
+    <div class="row">
+        <!-- Tunggakan Arisan -->
+        <div class="col-lg-6">
+            <div class="admin-section">
+                <h2 class="admin-section-title" style="color: #f59e0b;">
+                    <i class="fas fa-piggy-bank"></i>
+                    Tunggakan Arisan (Top 5)
+                    <span class="badge badge-warning ml-auto" style="font-size: 0.8rem; background-color: #f59e0b; color: white;">Total Tunggakan: Rp {{ number_format($totalNominalTunggakanArisan, 0, ',', '.') }}</span>
+                </h2>
+                @if(count($topTunggakanArisan) > 0)
+                    @foreach($topTunggakanArisan as $tunggakan)
+                    <div class="admin-list-item">
+                        <div>
+                            <strong>{{ $tunggakan->user->name }}</strong>
+                            <div style="font-size: 13px; color: #64748b;">
+                                Menunggak {{ $tunggakan->unpaid_count }} Bulan
+                            </div>
+                        </div>
+                        <span class="admin-badge admin-badge-warning">
+                            Rp {{ number_format($tunggakan->nominal, 0, ',', '.') }}
+                        </span>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="admin-empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Semua warga sudah melunasi arisan!</p>
                     </div>
                 @endif
             </div>

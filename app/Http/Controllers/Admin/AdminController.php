@@ -10,6 +10,7 @@ use App\Models\ArisanTahun;
 use App\Models\CatatanArisan;
 use App\Models\Denda;
 use App\Models\SettingRT;
+use App\Models\ArisanTanggal;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -123,13 +124,46 @@ class AdminController extends Controller
             ->get();
 
         // ==========================================
-        // 5. PENGATURAN RT
+        // 4.5 STATISTIK TUNGGAKAN ARISAN (GLOBAL RT)
         // ==========================================
         $settingRT = SettingRT::where('rt_id', $rt_id)->first();
-
         $iuranArisan = $settingRT->iuran_arisan ?? 0;
         $dendaAbsensi = $settingRT->denda_absensi ?? 0;
         $dendaArisan = $settingRT->denda_arisan ?? 0;
+
+        $allDatesCount = ArisanTanggal::count();
+        $members = User::where('rt_id', $rt_id)->whereIn('role', ['admin', 'anggota', 'sekretaris', 'bendahara'])->get();
+        $totalExpectedArisan = $members->count() * $allDatesCount;
+        
+        $totalPaidArisan = CatatanArisan::whereHas('user', function($q) use ($rt_id) {
+            $q->where('rt_id', $rt_id);
+        })->count();
+
+        $totalUnpaidCountArisan = max(0, $totalExpectedArisan - $totalPaidArisan);
+        $totalNominalTunggakanArisan = $totalUnpaidCountArisan * $iuranArisan;
+
+        // Top 5 Anggota Penunggak Arisan
+        $usersWithTunggakan = [];
+        foreach ($members as $member) {
+            $paidCount = CatatanArisan::where('user_id', $member->id)->count();
+            $unpaidCount = $allDatesCount - $paidCount;
+            if ($unpaidCount > 0) {
+                $usersWithTunggakan[] = (object)[
+                    'user' => $member,
+                    'unpaid_count' => $unpaidCount,
+                    'nominal' => $unpaidCount * $iuranArisan
+                ];
+            }
+        }
+        usort($usersWithTunggakan, function($a, $b) {
+            return $b->unpaid_count <=> $a->unpaid_count;
+        });
+        $topTunggakanArisan = array_slice($usersWithTunggakan, 0, 5);
+
+        // ==========================================
+        // 5. PENGATURAN RT
+        // ==========================================
+        // Setting sudah dipindah ke atas
 
         // ==========================================
         // 6. ANGGOTA DENGAN ABSENSI RENDAH (< 50%)
@@ -208,6 +242,9 @@ class AdminController extends Controller
             'dendaLunas',
             'anggotaBermasalah',
             'dendaTertunggak',
+            // Tunggakan Arisan
+            'totalNominalTunggakanArisan',
+            'topTunggakanArisan',
             // Pengaturan
             'settingRT',
             'iuranArisan',

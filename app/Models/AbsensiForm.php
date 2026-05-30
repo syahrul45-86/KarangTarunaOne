@@ -17,6 +17,7 @@ class AbsensiForm extends Model
         'jam_mulai',
         'jam_selesai',
         'qr_token',
+        'rt_id',
     ];
 
     public function absensi()

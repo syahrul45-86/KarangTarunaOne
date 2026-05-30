@@ -13,8 +13,12 @@ class RekapAbsensiControllers extends Controller
 {
     public function index()
     {
-        // Ambil semua kegiatan absensi
-        $forms = AbsensiForm::orderBy('tanggal', 'desc')->get();
+        $rt_id = auth()->user()->rt_id;
+
+        // Ambil semua kegiatan absensi khusus untuk RT Admin
+        $forms = AbsensiForm::where('rt_id', $rt_id)
+            ->orderBy('tanggal', 'desc')
+            ->get();
 
         return view('admin.rekap_absensi.index', compact('forms'));
     }
@@ -71,7 +75,10 @@ class RekapAbsensiControllers extends Controller
     ====================================================== */
     public function grafik()
     {
-        $forms = AbsensiForm::withCount('absensi')->get();
+        $rt_id = auth()->user()->rt_id;
+        $forms = AbsensiForm::where('rt_id', $rt_id)
+            ->withCount('absensi')
+            ->get();
 
         return view('admin.rekap_absensi.grafik', compact('forms'));
     }
@@ -82,8 +89,9 @@ class RekapAbsensiControllers extends Controller
     ====================================================== */
     public function perAnggota()
     {
-        $users = User::where('rt_id', auth()->user()->rt_id)->get();
-        $totalKegiatan = AbsensiForm::count();
+        $rt_id = auth()->user()->rt_id;
+        $users = User::where('rt_id', $rt_id)->get();
+        $totalKegiatan = AbsensiForm::where('rt_id', $rt_id)->count();
 
         $data = [];
 

@@ -11,8 +11,9 @@ class KasController extends Controller
 {
     public function index()
     {
+        // Ambil data kas hanya untuk RT yang sama dengan bendahara
         $kas = Kas::with('user')
-                  ->whereIn('user_id', User::where('rt_id', auth()->user()->rt_id)->pluck('id'))
+                  ->where('rt_id', auth()->user()->rt_id)
                   ->orderBy('tanggal', 'desc')
                   ->get();
 
@@ -21,7 +22,12 @@ class KasController extends Controller
 
     public function create()
     {
-        $anggota = User::where('rt_id', auth()->user()->rt_id)->get();
+        // Ambil daftar anggota di RT yang sama saja
+        $anggota = User::where('rt_id', auth()->user()->rt_id)
+                       ->whereIn('role', ['anggota', 'sekretaris', 'bendahara'])
+                       ->orderBy('name', 'asc')
+                       ->get();
+
         return view('bendahara.kas.create', compact('anggota'));
     }
 
@@ -29,20 +35,30 @@ class KasController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'jumlah_setoran' => 'required|integer|min:0',
+            'nominal' => 'required|numeric|min:0',
             'tanggal' => 'required|date',
-            'keterangan' => 'nullable|string'
+            'keterangan' => 'nullable|string|max:255'
         ]);
 
-        Kas::create($request->all());
+        Kas::create([
+            'rt_id' => auth()->user()->rt_id,
+            'user_id' => $request->user_id,
+            'nominal' => $request->nominal,
+            'tanggal' => $request->tanggal,
+            'keterangan' => $request->keterangan
+        ]);
 
         return redirect()->route('bendahara.kas.index')
-                         ->with('success', 'Setoran kas berhasil ditambahkan!');
+                         ->with('success', 'Setoran kas anggota berhasil dicatat!');
     }
 
     public function destroy($id)
     {
-        Kas::findOrFail($id)->delete();
+        $kas = Kas::where('id', $id)
+                  ->where('rt_id', auth()->user()->rt_id)
+                  ->firstOrFail();
+        
+        $kas->delete();
 
         return back()->with('success', 'Data kas berhasil dihapus!');
     }

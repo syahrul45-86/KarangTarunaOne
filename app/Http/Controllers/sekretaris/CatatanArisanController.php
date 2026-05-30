@@ -72,8 +72,11 @@ class CatatanArisanController extends Controller
     {
         $tahun = ArisanTahun::with('tanggal')->findOrFail($request->tahun_id);
 
-        // Ambil anggota sesuai RT sekretaris yang login
-        $anggota = User::where('rt_id', auth()->user()->rt_id)->get();
+        // Ambil anggota sesuai RT sekretaris yang login (termasuk admin)
+        $anggota = User::where('rt_id', auth()->user()->rt_id)
+            ->whereIn('role', ['admin', 'anggota', 'sekretaris', 'bendahara'])
+            ->orderBy('name', 'asc')
+            ->get();
 
         return view('sekretaris.catatan_arisan.show_tahun', compact('tahun', 'anggota'));
     }
@@ -94,6 +97,7 @@ class CatatanArisanController extends Controller
                                  ->first();
 
         if ($catatan) {
+            // If exists, delete (toggle off)
             $catatan->delete();
             return response()->json([
                 'status' => 'deleted',
@@ -101,10 +105,12 @@ class CatatanArisanController extends Controller
             ]);
         }
 
+        // Create new catatan with optional keterangan
         CatatanArisan::create([
-            'user_id'     => $request->user_id,
-            'tanggal_id'  => $request->tanggal_id,
-            'sudah_bayar' => true
+            'user_id' => $request->user_id,
+            'tanggal_id' => $request->tanggal_id,
+            'sudah_bayar' => true,
+            'keterangan' => $request->filled('keterangan') ? $request->keterangan : null,
         ]);
 
         return response()->json([
@@ -126,5 +132,64 @@ class CatatanArisanController extends Controller
 
         $tanggal->delete();
         return back()->with('success', 'Tanggal berhasil dihapus!');
+    }
+
+    /* =============================
+        REKAP ARISAN KESELURUHAN
+    ==============================*/
+    public function recap()
+    {
+        $rt_id = auth()->user()->rt_id;
+        $members = User::where('rt_id', $rt_id)
+            ->whereIn('role', ['admin', 'anggota', 'sekretaris', 'bendahara'])
+            ->get();
+        
+        $allDates = ArisanTanggal::all();
+        $allDatesIds = $allDates->pluck('id')->toArray();
+
+        foreach ($members as $member) {
+            $paidIds = CatatanArisan::where('user_id', $member->id)
+                ->whereIn('tanggal_id', $allDatesIds)
+                ->pluck('tanggal_id')
+                ->toArray();
+            
+            $member->unpaid_dates = array_diff($allDatesIds, $paidIds);
+            $member->unpaid_count = count($member->unpaid_dates);
+        }
+
+        // Statistics
+        $totalOutstandingCount = $members->sum('unpaid_count');
+        $mostDelinquent = $members->sortByDesc('unpaid_count')->first();
+
+        return view('sekretaris.catatan_arisan.recap', compact('members', 'totalOutstandingCount', 'mostDelinquent'));
+    }
+
+    /* =============================
+        PAY ALL (BULK PAY)
+    ==============================*/
+    public function payAll(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $user_id = $request->user_id;
+        $allDatesIds = ArisanTanggal::pluck('id')->toArray();
+        $paidIds = CatatanArisan::where('user_id', $user_id)->pluck('tanggal_id')->toArray();
+        $missingIds = array_diff($allDatesIds, $paidIds);
+
+        if (empty($missingIds)) {
+            return back()->with('info', 'Anggota ini sudah membayar semua arisan.');
+        }
+
+        foreach ($missingIds as $tanggalId) {
+            CatatanArisan::create([
+                'user_id' => $user_id,
+                'tanggal_id' => $tanggalId,
+                'sudah_bayar' => true
+            ]);
+        }
+
+        return back()->with('success', 'Berhasil melunasi ' . count($missingIds) . ' sesi arisan untuk anggota tersebut.');
     }
 }

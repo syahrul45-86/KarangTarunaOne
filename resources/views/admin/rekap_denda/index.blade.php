@@ -7,7 +7,7 @@
 
 <div class="rekap-denda-container">
     <div class="rekap-denda-header">
-        <h3>💰 Rekap Denda Anggota</h3>
+        <h3>💰 Rekap Tunggakan (Denda & Arisan)</h3>
         <div class="rekap-denda-btn-group">
 
             <a href="{{ route('admin.denda.per_anggota') }}" class="rekap-denda-btn rekap-denda-btn-secondary">
@@ -36,8 +36,9 @@
                 <thead>
                     <tr>
                         <th>Nama</th>
-                        <th>Total Denda</th>
-                        <th>Belum Bayar</th>
+                        <th>Tunggakan Denda</th>
+                        <th>Tunggakan Arisan</th>
+                        <th>Total Keseluruhan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -47,14 +48,19 @@
                         <td data-label="Nama">
                             <span class="rekap-denda-nama">{{ $row['user']->name }}</span>
                         </td>
-                        <td data-label="Total Denda">
-                            <span class="rekap-denda-amount rekap-denda-total">
-                                Rp {{ number_format($row['total'], 0, ',', '.') }}
-                            </span>
-                        </td>
-                        <td data-label="Belum Bayar">
+                        <td data-label="Tunggakan Denda">
                             <span class="rekap-denda-amount rekap-denda-unpaid">
                                 Rp {{ number_format($row['belum_bayar'], 0, ',', '.') }}
+                            </span>
+                        </td>
+                        <td data-label="Tunggakan Arisan">
+                            <span class="rekap-denda-amount" style="color: #f59e0b; font-weight: bold;">
+                                Rp {{ number_format($row['tunggakan_arisan'], 0, ',', '.') }}
+                            </span>
+                        </td>
+                        <td data-label="Total Keseluruhan">
+                            <span class="rekap-denda-amount" style="color: #dc2626; font-weight: bold; font-size: 1.1em;">
+                                Rp {{ number_format($row['total_semua'], 0, ',', '.') }}
                             </span>
                         </td>
                         <td data-label="Aksi">
@@ -68,7 +74,7 @@
                         <td colspan="4">
                             <div class="rekap-denda-empty-state">
                                 <div class="rekap-denda-empty-state-icon">💰</div>
-                                <div class="rekap-denda-empty-state-text">Belum ada data denda</div>
+                                <div class="rekap-denda-empty-state-text">Belum ada data tunggakan/denda</div>
                             </div>
                         </td>
                     </tr>

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Bendahara;
 use App\Http\Controllers\Controller;
 use App\Models\Denda;
 use App\Models\User;
+use App\Models\SettingRT;
+use App\Models\ArisanTanggal;
+use App\Models\CatatanArisan;
 use Illuminate\Http\Request;
 
 class DendaController extends Controller
@@ -17,19 +20,33 @@ class DendaController extends Controller
         $bendahara = auth()->user();
         $search = $request->search;
 
-        $denda = Denda::with('user')
-            ->whereHas('user', function ($q) use ($bendahara) {
-                $q->where('rt_id', $bendahara->rt_id);
+        $users = User::where('rt_id', $bendahara->rt_id)
+            ->when($search, function($query) use ($search) {
+                $query->where('name', 'LIKE', "%$search%");
             })
-            ->when($search, function ($query) use ($search) {
-                $query->whereHas('user', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%$search%");
-                });
-            })
-            ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('bendahara.denda.index', compact('denda', 'search'));
+        $settingRT = SettingRT::where('rt_id', $bendahara->rt_id)->first();
+        $iuranArisan = $settingRT->iuran_arisan ?? 0;
+        $allDatesCount = ArisanTanggal::count();
+
+        $data = [];
+        foreach ($users as $u) {
+            $belum = Denda::where('user_id', $u->id)->where('status', 'belum_bayar')->sum('jumlah_denda');
+
+            $paidCount = CatatanArisan::where('user_id', $u->id)->count();
+            $unpaidCount = max(0, $allDatesCount - $paidCount);
+            $tunggakanArisan = $unpaidCount * $iuranArisan;
+
+            $data[] = [
+                'user' => $u,
+                'belum_bayar' => $belum,
+                'tunggakan_arisan' => $tunggakanArisan,
+                'total_semua' => $belum + $tunggakanArisan,
+            ];
+        }
+
+        return view('bendahara.denda.index', compact('data', 'search'));
     }
 
     // =========================
@@ -126,6 +143,7 @@ public function store(Request $request)
     $request->validate([
         'user_id' => 'required|exists:users,id',
         'jumlah_denda' => 'required|numeric|min:0',
+        'jenis' => 'required|in:manual,kegiatan',
     ]);
 
     // cari denda aktif apapun jenisnya
@@ -138,17 +156,21 @@ public function store(Request $request)
         $existing->jumlah_denda += $request->jumlah_denda;
         $existing->save();
     } else {
-        // baru buat manual
+        // baru buat manual/kegiatan
         Denda::create([
             'user_id' => $request->user_id,
-            'jenis' => 'manual',
+            'jenis' => $request->jenis,
             'jumlah_denda' => $request->jumlah_denda,
             'status' => 'belum_bayar',
         ]);
     }
 
+    if ($request->jenis == 'kegiatan') {
+        return redirect()->route('bendahara.denda.kegiatan')->with('success', 'Denda kegiatan berhasil ditambahkan!');
+    }
+
     return redirect()->route('bendahara.denda.absensi')
-        ->with('success', 'Denda manual berhasil ditambahkan!');
+        ->with('success', 'Denda absensi manual berhasil ditambahkan!');
 }
 
 

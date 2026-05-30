@@ -70,22 +70,22 @@
         object-fit: cover;
     }
 
-    /* Posisi elemen menggunakan PERSENTASE untuk konsistensi di semua ukuran */
-    .user-photo {
+    /* Foto profil — background-image approach agar html2canvas bisa render dengan benar */
+    .user-photo-wrapper {
         position: absolute;
-        /* Posisi vertikal: 5% dari atas */
         top: 5%;
         left: 50%;
         transform: translateX(-50%);
-        /* Ukuran: 30% dari lebar container */
         width: 30%;
-        /* Aspect ratio 1:1 untuk foto bundar */
         aspect-ratio: 1 / 1;
         border-radius: 50%;
-        object-fit: cover;
-        /* Border: 1.5% dari lebar container */
+        overflow: hidden;
         border: calc(var(--card-max-width) * 0.015) solid #ffffff;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-color: #e2e8f0;
     }
 
     .user-name {
@@ -228,7 +228,7 @@
         .card-wrapper {
             padding: 40px;
         }
-        .user-photo {
+        .user-photo-wrapper {
             width: 40%;
             top: 10%;
         }
@@ -248,7 +248,7 @@
             --spacing-base: 20px;
         }
 
-        .user-photo {
+        .user-photo-wrapper {
             width: 40%;
             top: 10%;
         }
@@ -293,7 +293,7 @@
         }
 
         /* Foto sedikit lebih besar di mobile agar terlihat jelas */
-        .user-photo {
+        .user-photo-wrapper {
             width: 40%;
             top: 10%;
         }
@@ -343,7 +343,7 @@
             width: auto;
             padding: 10px 20px;
         }
-        .user-photo {
+        .user-photo-wrapper {
             width: 40%;
             top: 10%;
         }
@@ -362,7 +362,6 @@
     /* High DPI screens */
     @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
         .template-image,
-        .user-photo,
         .qr-code img {
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
@@ -401,10 +400,10 @@
                  class="template-image"
                  alt="ID Card Template">
 
-            <!-- User Photo -->
-            <img src="{{ asset('storage/' . $user->image) }}"
-                 class="user-photo"
-                 alt="User Photo">
+            <!-- User Photo (background-image agar html2canvas render bulat + cover benar) -->
+            <div class="user-photo-wrapper"
+                 style="background-image: url('{{ asset('storage/' . $user->image) }}');"
+            ></div>
 
             <!-- User Name -->
             <div class="user-name">

@@ -11,12 +11,10 @@ return new class extends Migration
         Schema::create('kas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rt_id')->constrained('rts')->onDelete('cascade');
-            $table->enum('jenis', ['pemasukan', 'pengeluaran']);
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('nominal');
             $table->string('keterangan')->nullable();
             $table->date('tanggal');
-            $table->integer('saldo_awal')->default(0);
-            $table->integer('saldo_akhir')->default(0);
             $table->timestamps();
         });
     }

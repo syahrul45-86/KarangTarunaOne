@@ -1,146 +1,126 @@
-        <!-- Sidebar -->
+<!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('sekretaris.dashboard') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3"> Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3">Sekretaris</div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-           <!-- Nav Item - Dashboard -->
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('sekretaris.dashboard') }}">
-        <i class="fas fa-fw fa-home"></i>
-        <span>Dashboard</span>
-    </a>
-</li>
-
-<!-- Nav Item - Absensi -->
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('sekretaris.absensi.index') }}">
-        <i class="fas fa-fw fa-clipboard-check"></i>
-        <span>Absensi</span>
-    </a>
-</li>
-
-{{-- <!-- Nav Item - Scan QR -->
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('scan.qr') }}">
-        <i class="fas fa-fw fa-qrcode"></i>
-        <span>Scan QR Absensi</span>
-    </a>
-</li> --}}
-
-<!-- Nav Item - Catatan Arisan -->
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('sekretaris.catatan.index') }}">
-        <i class="fas fa-fw fa-piggy-bank"></i>
-        <span>Catatan Arisan</span>
-    </a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('sekretaris.spin.index') }}">
-        <i class="fas fa-fw fa-piggy-bank"></i>
-        <span>Spin arisan</span>
-    </a>
-</li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Components</span>
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item {{ request()->routeIs('sekretaris.dashboard') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.dashboard') }}">
+                    <i class="fas fa-fw fa-home"></i>
+                    <span>Dashboard</span>
                 </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                </div>
             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
-            <div class="sidebar-heading">
-                Addons
-            </div>
+            <div class="sidebar-heading">Absensi</div>
 
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
+            <!-- Nav Item - Absensi -->
+            <li class="nav-item {{ request()->routeIs('sekretaris.absensi.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.absensi.index') }}">
+                    <i class="fas fa-fw fa-clipboard-check"></i>
+                    <span>Daftar Absensi</span>
                 </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div>
             </li>
 
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Charts</span></a>
+            <!-- Nav Item - Izin Absensi -->
+            @php
+                $pendingIzinCount = \App\Models\IzinAbsensi::where('status', 'pending')
+                    ->whereHas('user', fn($q) => $q->where('rt_id', auth()->user()->rt_id ?? 0))
+                    ->count();
+            @endphp
+            <li class="nav-item {{ request()->routeIs('sekretaris.izin.list') ? 'active' : '' }}">
+                <a class="nav-link d-flex align-items-center justify-content-between" href="{{ route('sekretaris.izin.list') }}">
+                    <span>
+                        <i class="fas fa-fw fa-calendar-check"></i>
+                        <span>Izin Absensi</span>
+                    </span>
+                    @if($pendingIzinCount > 0)
+                        <span class="badge badge-danger badge-counter">{{ $pendingIzinCount }}</span>
+                    @endif
+                </a>
             </li>
 
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">Arisan</div>
+
+            <!-- Nav Item - Catatan Arisan -->
+            <li class="nav-item {{ request()->routeIs('sekretaris.catatan.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.catatan.index') }}">
+                    <i class="fas fa-fw fa-piggy-bank"></i>
+                    <span>Catatan Arisan</span>
+                </a>
+            </li>
+
+            <li class="nav-item {{ request()->routeIs('sekretaris.spin.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.spin.index') }}">
+                    <i class="fas fa-fw fa-sync-alt"></i>
+                    <span>Spin Arisan</span>
+                </a>
+            </li>
+
+            <li class="nav-item {{ request()->routeIs('sekretaris.arisan.recap') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.arisan.recap') }}">
+                    <i class="fas fa-fw fa-chart-pie"></i>
+                    <span>Rekap Arisan</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">Akun</div>
+
+            <!-- Nav Item - QR Code -->
+            <li class="nav-item {{ request()->routeIs('sekretaris.qrcode.show') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.qrcode.show') }}">
+                    <i class="fas fa-fw fa-qrcode"></i>
+                    <span>QR Code Saya</span>
+                </a>
+            </li>
+
+            @php
+                $activeFormsCount = \App\Models\AbsensiForm::where('rt_id', auth()->user()->rt_id)
+                    ->whereDate('tanggal', '>=', now()->toDateString())
+                    ->count();
+            @endphp
+            <li class="nav-item {{ request()->routeIs('user.izin.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('user.izin.index') }}">
+                    <i class="fas fa-fw fa-envelope-open-text"></i>
+                    <span>Ajukan Izin</span>
+                    @if($activeFormsCount > 0)
+                        <span class="badge badge-danger badge-counter" style="font-size: 10px; margin-left: 5px;">{{ $activeFormsCount }}</span>
+                    @endif
+                </a>
+            </li>
+
+            <!-- Nav Item - Profile -->
+            <li class="nav-item {{ request()->routeIs('sekretaris.profile.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.profile.index') }}">
+                    <i class="fas fa-fw fa-user-circle"></i>
+                    <span>Profile</span>
+                </a>
             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
-            <!-- Sidebar Toggler (Sidebar) -->
+            <!-- Sidebar Toggler -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>

@@ -9,6 +9,7 @@ use App\Http\Controllers\Bendahara\BendaharaController;
 use App\Http\Controllers\Sekretaris\SekretarisController;
 use App\Http\Controllers\Anggota\AnggotaController;
 use App\Http\Controllers\Anggota\ProfileAnggotaController;
+use App\Http\Controllers\QrcodeController;
 use App\Http\Controllers\Bendahara\ProfileBendaharaController;
 use App\Http\Controllers\Admin\ProfileAdminController;
 use App\Http\Controllers\Admin\TambahAnggotaController;
@@ -63,6 +64,8 @@ Route::middleware(['auth', 'role:admin'])->group(function(){
     Route::post('/admin/profile/update', [ProfileAdminController::class, 'update'])->name('admin.profile.update');
     Route::post('/admin/profile/password', [ProfileAdminController::class, 'updatePassword'])->name('admin.profile.password');
 
+    Route::get('/admin/qrcode', [QrcodeController::class, 'show'])->name('admin.qrcode.show');
+
     Route::get('/admin/AnggotaRT', [TambahAnggotaController::class, 'index'])->name('admin.AnggotaRT.index');
     Route::post('/admin/TambahAnggota', [TambahAnggotaController::class, 'store'])->name('admin.AnggotaRT.store');
 
@@ -114,9 +117,7 @@ Route::get('/user-qr/{userId}', [TambahAnggotaController::class, 'getUserQR'])->
     Route::get('/rekap-absensi/{id}/pdf',
     [RekapAbsensiControllers::class, 'exportPdf'])
     ->name('admin.rekap.pdf');
-    // end
-
-    // rekab arisan
+    // (izin routes dipindah ke grup anggota dan sekretaris masing-masing)
     Route::get('/rekap-arisan',
         [RekapArisanController::class, 'index'])->name('admin.rekap.arisan.index');
 
@@ -160,6 +161,8 @@ Route::middleware(['auth', 'role:bendahara'])->group( function() {
     Route::get('/bendahara/profile/edit', [ProfileBendaharaController::class, 'edit'])->name('bendahara.profile.edit');
     Route::post('/bendahara/profile/update', [ProfileBendaharaController::class, 'update'])->name('bendahara.profile.update');
     Route::post('/bendahara/password', [ProfileBendaharaController::class, 'updatePassword'])->name('bendahara.profile.password');
+
+    Route::get('/bendahara/qrcode', [QrcodeController::class, 'show'])->name('bendahara.qrcode.show');
 
 
     //    Bendahara
@@ -222,6 +225,8 @@ Route::middleware(['auth', 'role:sekretaris'])->group(function(){
     Route::post('/sekretaris/profile/update', [ProfileSekretarisController::class, 'update'])->name('sekretaris.profile.update');
     Route::post('/sekretaris/profile/password', [ProfileSekretarisController::class, 'updatePassword'])->name('sekretaris.profile.password');
 
+    Route::get('/sekretaris/qrcode', [QrcodeController::class, 'show'])->name('sekretaris.qrcode.show');
+
  // Route yang sudah ada...
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('sekretaris.absensi.index');
     Route::get('/absensi/create', [AbsensiController::class, 'create'])->name('absensi.create');
@@ -248,6 +253,9 @@ Route::middleware(['auth', 'role:sekretaris'])->group(function(){
 
     Route::get('/sekretaris/absensi//{id}/proses-denda', [AbsensiController::class, 'prosesDenda'])
         ->name('sekretaris.absensi.proses_denda');
+
+    Route::post('/sekretaris/absensi/{id}/manual', [AbsensiController::class, 'manualAttend'])
+        ->name('sekretaris.absensi.manual');
 
     Route::delete('/sekretaris/absensi//{id}', [AbsensiController::class, 'destroy'])
         ->name('sekretaris.absensi.delete');
@@ -280,6 +288,14 @@ Route::middleware(['auth', 'role:sekretaris'])->group(function(){
     Route::delete('/arisan/tanggal/{id}/delete', [CatatanArisanController::class, 'deleteTanggal'])
         ->name('sekretaris.tanggal.delete');
 
+    // Rekap Arisan Keseluruhan
+    Route::get('/arisan/recap', [CatatanArisanController::class, 'recap'])
+        ->name('sekretaris.arisan.recap');
+
+    // Bayar Semua (Bulk Pay)
+    Route::post('/arisan/pay-all', [CatatanArisanController::class, 'payAll'])
+        ->name('sekretaris.arisan.pay-all');
+
     // Tambah anggota arisan
 Route::post('/arisan/anggota/add', [CatatanArisanController::class, 'addAnggota'])
     ->name('sekretaris.anggota.add');
@@ -289,6 +305,13 @@ Route::post('/arisan/anggota/remove', [CatatanArisanController::class, 'removeAn
     ->name('sekretaris.anggota.remove');
 
     Route::get('sekretaris/spin', [SpinController::class, 'index'])->name('sekretaris.spin.index');
+
+    // =========================
+    // Izin Absensi Management (Sekretaris)
+    // =========================
+    Route::get('/sekretaris/izin', [App\Http\Controllers\Sekretaris\AbsensiController::class, 'izinList'])->name('sekretaris.izin.list');
+    Route::post('/sekretaris/izin/{id}/approve', [App\Http\Controllers\Sekretaris\AbsensiController::class, 'approveIzin'])->name('sekretaris.izin.approve');
+    Route::post('/sekretaris/izin/{id}/reject', [App\Http\Controllers\Sekretaris\AbsensiController::class, 'rejectIzin'])->name('sekretaris.izin.reject');
 
 });
 
@@ -303,9 +326,13 @@ Route::middleware(['auth', 'role:anggota'])->group(function(){
     Route::post('/anggota/profile/update', [ProfileAnggotaController::class, 'update'])->name('anggota.profile.update');
     Route::post('/anggota/profile/password', [ProfileAnggotaController::class, 'updatePassword'])->name('anggota.profile.password');
 
+    Route::get('/anggota/qrcode', [QrcodeController::class, 'show'])->name('anggota.qrcode.show');
 
-
+    // =========================
+    // Izin Absensi (Global untuk semua role)
+    // =========================
+    Route::get('/izin-absensi', [App\Http\Controllers\Anggota\IzinAbsensiController::class, 'index'])->name('user.izin.index');
+    Route::post('/izin-absensi/store', [App\Http\Controllers\Anggota\IzinAbsensiController::class, 'store'])->name('user.izin.store');
 });
-
 
 require __DIR__.'/auth.php';

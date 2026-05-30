@@ -5,48 +5,17 @@
 @section('content')
 <div class="container">
 
-    <h3 class="mb-3">Denda Kegiatan</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">Denda Kegiatan</h3>
+        <a href="{{ route('bendahara.denda.create') }}" class="btn btn-primary shadow-sm" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border: none; border-radius: 8px; padding: 10px 20px;">
+            <i class="fas fa-plus mr-1"></i> Tambah Denda
+        </a>
+    </div>
 
     {{-- ALERT --}}
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success border-left-success shadow-sm">{{ session('success') }}</div>
     @endif
-
-    {{-- FORM TAMBAH --}}
-    <div class="card mb-4">
-        <div class="card-header">Tambah Denda Kegiatan</div>
-        <div class="card-body">
-
-            <form action="{{ route('bendahara.denda.kegiatan.store') }}" method="POST">
-                @csrf
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <select name="user_id" class="form-control" required>
-                            <option value="">-- Pilih Anggota --</option>
-                            @foreach($users as $u)
-                                <option value="{{ $u->id }}">{{ $u->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <input type="number" name="jumlah_denda"
-                               class="form-control"
-                               placeholder="Jumlah denda"
-                               required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <button class="btn btn-primary w-100">
-                            Tambah
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-        </div>
-    </div>
 
     {{-- TABEL --}}
     <div class="card">

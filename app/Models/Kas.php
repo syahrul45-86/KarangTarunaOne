@@ -10,16 +10,19 @@ class Kas extends Model
 
     protected $fillable = [
         'rt_id',
-        'jenis',
+        'user_id',
         'nominal',
         'keterangan',
         'tanggal',
-        'saldo_awal',
-        'saldo_akhir'
     ];
 
     public function rt()
     {
         return $this->belongsTo(Rt::class, 'rt_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

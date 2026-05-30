@@ -7,6 +7,7 @@ use App\Models\Absensi;
 use App\Models\AbsensiForm;
 use App\Models\Denda;
 use App\Models\User;
+use App\Models\IzinAbsensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -18,7 +19,18 @@ class AbsensiController extends Controller
     // =========================
     public function index()
     {
-        $forms = AbsensiForm::orderBy('created_at', 'desc')->get();
+        $rt_id = auth()->user()->rt_id;
+
+        $forms = AbsensiForm::where('rt_id', $rt_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $forms->transform(function ($form) {
+            $form->pending_izin_count = \App\Models\IzinAbsensi::where('form_id', $form->id)
+                ->where('status', 'pending')
+                ->count();
+            return $form;
+        });
 
         return view('sekretaris.absensi.index', compact('forms'));
     }
@@ -48,6 +60,7 @@ class AbsensiController extends Controller
             'tanggal' => $request->tanggal,
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
+            'rt_id' => auth()->user()->rt_id,
         ]);
 
         return redirect()->route('sekretaris.absensi.index')
@@ -76,7 +89,13 @@ class AbsensiController extends Controller
                 ->with('error', 'Waktu absensi sudah berakhir! Waktu selesai: ' . $form->jam_selesai);
         }
 
-        return view('sekretaris.absensi.scan', compact('form'));
+        // Ambil daftar user di RT ini untuk input manual
+        $users = User::where('rt_id', auth()->user()->rt_id)
+                     ->whereIn('role', ['anggota', 'sekretaris', 'bendahara'])
+                     ->orderBy('name', 'asc')
+                     ->get();
+
+        return view('sekretaris.absensi.scan', compact('form', 'users'));
     }
 
     // =========================
@@ -224,12 +243,22 @@ class AbsensiController extends Controller
             ->orderBy('waktu_absen', 'asc')
             ->get();
 
-        // Ambil total user di RT
-        $totalUser = User::where('rt_id', auth()->user()->rt_id)->count();
-        $totalHadir = $absenList->count();
-        $totalTidakHadir = $totalUser - $totalHadir;
+        // Ambil daftar yang izin dan disetujui
+        $izinList = IzinAbsensi::where('form_id', $id)
+            ->where('status', 'approved')
+            ->with('user')
+            ->get();
 
-        return view('sekretaris.absensi.cek', compact('form', 'absenList', 'totalUser', 'totalHadir', 'totalTidakHadir'));
+        // Ambil total user di RT (Anggota, Sekretaris, Bendahara, Admin)
+        $totalUser = User::where('rt_id', auth()->user()->rt_id)
+            ->whereIn('role', ['admin', 'anggota', 'sekretaris', 'bendahara'])
+            ->count();
+            
+        $totalHadir = $absenList->count();
+        $totalIzin = $izinList->count();
+        $totalTidakHadir = $totalUser - $totalHadir - $totalIzin;
+
+        return view('sekretaris.absensi.cek', compact('form', 'absenList', 'izinList', 'totalUser', 'totalHadir', 'totalIzin', 'totalTidakHadir'));
     }
 
     // =========================
@@ -251,9 +280,9 @@ class AbsensiController extends Controller
         $setting = \App\Models\SettingRT::where('rt_id', auth()->user()->rt_id)->first();
         $dendaAbsensi = $setting ? $setting->denda_absensi : 10000;
 
-        // Ambil seluruh user di RT ini
+        // Ambil seluruh user di RT ini (termasuk Admin)
         $users = User::where('rt_id', auth()->user()->rt_id)
-                     ->whereIn('role', ['anggota', 'sekretaris', 'bendahara'])
+                     ->whereIn('role', ['admin', 'anggota', 'sekretaris', 'bendahara'])
                      ->get();
 
         $jumlahDenda = 0;
@@ -265,7 +294,14 @@ class AbsensiController extends Controller
                                 ->where('user_id', $user->id)
                                 ->exists();
 
-            // Jika TIDAK HADIR → proses denda
+            // Cek apakah ada izin yang disetujui untuk form ini
+            $hasApprovedIzin = IzinAbsensi::where('user_id', $user->id)
+                ->where('form_id', $form->id)
+                ->where('status', 'approved')
+                ->exists();
+            if ($hasApprovedIzin) {
+                continue; // lewati denda untuk pengguna ini
+            }
             if (!$sudahAbsen) {
                 // Cek apakah user sudah punya denda yang belum dibayar
                 $dendaLama = Denda::where('user_id', $user->id)
@@ -323,5 +359,101 @@ class AbsensiController extends Controller
         $form->delete();
 
         return back()->with('success', 'Form absensi "' . $form->judul . '" berhasil dihapus!');
+    }
+    // =========================
+    // LIST PERMINTAAN IZIN (SEKRETARIS)
+    // =========================
+    public function izinList()
+    {
+        $rt_id = auth()->user()->rt_id;
+
+        $izinList = IzinAbsensi::where('status', 'pending')
+            ->with(['user', 'form'])
+            ->whereHas('user', fn($q) => $q->where('rt_id', $rt_id))
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('sekretaris.absensi.izin', compact('izinList'));
+    }
+
+    // =========================
+    // APPROVE IZIN
+    // =========================
+    public function approveIzin($id)
+    {
+        $izin = IzinAbsensi::with('user')->findOrFail($id);
+
+        // Validasi RT
+        if ($izin->user->rt_id !== auth()->user()->rt_id) {
+            return back()->with('error', 'Tidak diizinkan memproses izin dari RT lain.');
+        }
+
+        $izin->status = 'approved';
+        $izin->reviewed_by = auth()->id();
+        $izin->save();
+
+        return back()->with('success', 'Izin ' . $izin->user->name . ' berhasil disetujui.');
+    }
+
+    // =========================
+    // REJECT IZIN
+    // =========================
+    public function rejectIzin($id)
+    {
+        $izin = IzinAbsensi::with('user')->findOrFail($id);
+
+        // Validasi RT
+        if ($izin->user->rt_id !== auth()->user()->rt_id) {
+            return back()->with('error', 'Tidak diizinkan memproses izin dari RT lain.');
+        }
+
+        $izin->status = 'rejected';
+        $izin->reviewed_by = auth()->id();
+        $izin->save();
+
+        return back()->with('success', 'Izin ' . $izin->user->name . ' berhasil ditolak.');
+    }
+
+    // =========================
+    // ABSENSI MANUAL
+    // =========================
+    public function manualAttend(Request $request, $formId)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $form = AbsensiForm::findOrFail($formId);
+        $user = User::findOrFail($request->user_id);
+
+        // Validasi RT
+        if ($user->rt_id !== auth()->user()->rt_id) {
+            return response()->json(['success' => false, 'message' => 'User dari RT berbeda!'], 403);
+        }
+
+        // Cek sudah absen
+        $sudahAbsen = Absensi::where('form_id', $form->id)->where('user_id', $user->id)->first();
+        if ($sudahAbsen) {
+            return response()->json(['success' => false, 'message' => $user->name . ' sudah absen.'], 400);
+        }
+
+        // Simpan
+        $absen = Absensi::create([
+            'form_id' => $form->id,
+            'user_id' => $user->id,
+            'status' => 'hadir',
+            'waktu_absen' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Absensi manual berhasil: ' . $user->name,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'waktu_absen' => $absen->waktu_absen->format('H:i:s')
+            ]
+        ]);
     }
 }

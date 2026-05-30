@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Denda;
 use App\Models\Bendaharas;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\SettingRT;
+use App\Models\ArisanTanggal;
+use App\Models\CatatanArisan;
 use Carbon\Carbon;
 
 class BendaharaController extends Controller
@@ -106,9 +108,6 @@ class BendaharaController extends Controller
             ->get();
 
         // ==========================================
-        // 5. DENDA TERTUNGGAK (5 Teratas)
-        // ==========================================
-
         $dendaTertunggak = Denda::with('user')
             ->whereHas('user', function($q) use ($rt_id) {
                 $q->where('rt_id', $rt_id);
@@ -117,6 +116,41 @@ class BendaharaController extends Controller
             ->orderBy('jumlah_denda', 'desc')
             ->take(5)
             ->get();
+
+        // ==========================================
+        // 5.5 TUNGGAKAN ARISAN (GLOBAL RT)
+        // ==========================================
+        $settingRT = SettingRT::where('rt_id', $rt_id)->first();
+        $iuranArisan = $settingRT->iuran_arisan ?? 0;
+
+        $allDatesCount = ArisanTanggal::count();
+        $members = User::where('rt_id', $rt_id)->whereIn('role', ['anggota', 'sekretaris', 'bendahara'])->get();
+        $totalExpectedArisan = $members->count() * $allDatesCount;
+
+        $totalPaidArisan = CatatanArisan::whereHas('user', function($q) use ($rt_id) {
+            $q->where('rt_id', $rt_id);
+        })->count();
+
+        $totalUnpaidCountArisan = max(0, $totalExpectedArisan - $totalPaidArisan);
+        $totalNominalTunggakanArisan = $totalUnpaidCountArisan * $iuranArisan;
+
+        // Top 5 Anggota Penunggak Arisan
+        $usersWithTunggakan = [];
+        foreach ($members as $member) {
+            $paidCount = CatatanArisan::where('user_id', $member->id)->count();
+            $unpaidCount = $allDatesCount - $paidCount;
+            if ($unpaidCount > 0) {
+                $usersWithTunggakan[] = (object)[
+                    'user' => $member,
+                    'unpaid_count' => $unpaidCount,
+                    'nominal' => $unpaidCount * $iuranArisan
+                ];
+            }
+        }
+        usort($usersWithTunggakan, function($a, $b) {
+            return $b->unpaid_count <=> $a->unpaid_count;
+        });
+        $topTunggakanArisan = array_slice($usersWithTunggakan, 0, 5);
 
         // ==========================================
         // 6. PERSENTASE PERUBAHAN
@@ -143,6 +177,8 @@ class BendaharaController extends Controller
             'kegiatan',
             'transaksiTerbaru',
             'dendaTertunggak',
+            'totalNominalTunggakanArisan',
+            'topTunggakanArisan',
             'perubahanKas'
         ));
     }

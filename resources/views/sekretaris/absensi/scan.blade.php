@@ -98,7 +98,7 @@
     /* Mode Buttons */
     .mode-toggle {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 0;
         background: #f1f3f5;
         border-radius: 12px;
@@ -459,7 +459,11 @@
                 </button>
                 <button class="mode-btn" id="uploadModeBtn">
                     <i class="fas fa-upload"></i>
-                    Upload Gambar
+                    Upload
+                </button>
+                <button class="mode-btn" id="manualModeBtn">
+                    <i class="fas fa-keyboard"></i>
+                    Manual
                 </button>
             </div>
 
@@ -502,26 +506,69 @@
 
                 <div id="uploadStatus" class="d-none"></div>
             </div>
+
+            <!-- MANUAL MODE -->
+            <div id="manualMode" class="d-none">
+                <div class="p-3 bg-light rounded-lg border">
+                    <h6 class="font-weight-bold mb-3">Input Kehadiran Manual</h6>
+                    <form id="manualForm">
+                        <div class="form-group mb-3">
+                            <label class="small font-weight-bold">Cari Nama Anggota:</label>
+                            <select id="userSelect" class="form-control select2">
+                                <option value="">-- Pilih Anggota --</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }} ({{ strtoupper($user->role) }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="action-btn btn-scan">
+                            <i class="fas fa-check-circle"></i>
+                            Tandai Hadir
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Daftar Hadir -->
-    <div class="attendance-card">
-        <div class="attendance-header">
-            <h5>
-                <i class="fas fa-users"></i>
-                Daftar Hadir
-            </h5>
-            <div class="attendance-count">
-                <span id="attendanceCount">0</span> Hadir
+    <!-- Attendance Grid -->
+    <div class="row mt-4">
+        <!-- Daftar Hadir -->
+        <div class="col-lg-7">
+            <div class="attendance-card h-100">
+                <div class="attendance-header bg-success border-0">
+                    <h5>
+                        <i class="fas fa-check-double"></i>
+                        Sudah Hadir
+                    </h5>
+                    <div class="attendance-count bg-white text-success">
+                        <span id="attendanceCount">0</span> Hadir
+                    </div>
+                </div>
+                <div class="attendance-list border-0" id="absensiList" style="max-height: 500px;">
+                    <div class="empty-state">
+                        <i class="fas fa-walking fa-3x text-gray-200 mb-3"></i>
+                        <p>Belum ada yang melakukan absensi</p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="attendance-list" id="absensiList">
-            <div class="empty-state">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-                <p>Belum ada yang melakukan absensi</p>
+
+        <!-- Belum Hadir -->
+        <div class="col-lg-5">
+            <div class="attendance-card h-100 border-left-danger shadow-sm">
+                <div class="attendance-header bg-danger border-0">
+                    <h5>
+                        <i class="fas fa-user-clock"></i>
+                        Belum Hadir
+                    </h5>
+                    <div class="attendance-count bg-white text-danger">
+                        <span id="missingCount">0</span> Orang
+                    </div>
+                </div>
+                <div class="attendance-list border-0" id="missingList" style="max-height: 500px;">
+                    <!-- Will be populated by JS -->
+                </div>
             </div>
         </div>
     </div>
@@ -544,24 +591,34 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================
     const cameraModeBtn = document.getElementById('cameraModeBtn');
     const uploadModeBtn = document.getElementById('uploadModeBtn');
+    const manualModeBtn = document.getElementById('manualModeBtn');
     const cameraMode = document.getElementById('cameraMode');
     const uploadMode = document.getElementById('uploadMode');
+    const manualMode = document.getElementById('manualMode');
 
     cameraModeBtn.onclick = () => {
-        cameraModeBtn.classList.add('active');
-        uploadModeBtn.classList.remove('active');
-        uploadMode.classList.add('d-none');
-        cameraMode.classList.remove('d-none');
-        stopCamera();
+        switchMode('camera');
     };
 
     uploadModeBtn.onclick = () => {
-        uploadModeBtn.classList.add('active');
-        cameraModeBtn.classList.remove('active');
-        cameraMode.classList.add('d-none');
-        uploadMode.classList.remove('d-none');
-        stopCamera();
+        switchMode('upload');
     };
+
+    manualModeBtn.onclick = () => {
+        switchMode('manual');
+    };
+
+    function switchMode(mode) {
+        cameraModeBtn.classList.toggle('active', mode === 'camera');
+        uploadModeBtn.classList.toggle('active', mode === 'upload');
+        manualModeBtn.classList.toggle('active', mode === 'manual');
+        
+        cameraMode.classList.toggle('d-none', mode !== 'camera');
+        uploadMode.classList.toggle('d-none', mode !== 'upload');
+        manualMode.classList.toggle('d-none', mode !== 'manual');
+        
+        stopCamera();
+    }
 
     // ==========================================
     // CAMERA MODE
@@ -675,6 +732,49 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // ==========================================
+    // MANUAL MODE
+    // ==========================================
+    const manualForm = document.getElementById('manualForm');
+    const userSelect = document.getElementById('userSelect');
+
+    manualForm.onsubmit = function(e) {
+        e.preventDefault();
+        const userId = userSelect.value;
+        if (!userId) {
+            Swal.fire({ icon: 'warning', title: 'Pilih Anggota', text: 'Silakan pilih anggota terlebih dahulu.' });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Memproses...',
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        fetch("{{ route('sekretaris.absensi.manual', $form->id) }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ user_id: userId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: data.message });
+                return;
+            }
+
+            Swal.fire({ icon: 'success', title: 'Berhasil', text: data.message, timer: 1500, showConfirmButton: false });
+            addToList(data.user);
+            userSelect.value = ""; // Reset dropdown
+        })
+        .catch(() => {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem' });
+        });
+    };
+
+    // ==========================================
     // HANDLE SUCCESS SCAN
     // ==========================================
     function handleSuccess(token) {
@@ -707,18 +807,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     timer: 3000,
                     showConfirmButton: true
                 }).then(() => {
-                    // Reset after showing error - allow scanning again after 2 seconds
                     setTimeout(() => {
                         isProcessing = false;
                         lastScannedToken = null;
-                        cameraFrame.classList.remove('success', 'error');
-                        cameraFrame.classList.add('scanning');
+                        if (cameraFrame) cameraFrame.className = 'scanning';
                     }, 2000);
                 });
                 return;
             }
 
-            // Success animation
             Swal.fire({
                 icon: 'success',
                 title: 'Absensi Berhasil!',
@@ -735,12 +832,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 timer: 2500,
                 showConfirmButton: false
             }).then(() => {
-                // Reset after success - allow scanning next person after 2 seconds
                 setTimeout(() => {
                     isProcessing = false;
                     lastScannedToken = null;
-                    cameraFrame.classList.remove('success');
-                    cameraFrame.classList.add('scanning');
+                    if (cameraFrame) cameraFrame.className = 'scanning';
                 }, 2000);
             });
 
@@ -753,88 +848,87 @@ document.addEventListener("DOMContentLoaded", function () {
                 text: 'Terjadi kesalahan sistem',
                 confirmButtonColor: '#667eea'
             }).then(() => {
-                // Reset after error
                 setTimeout(() => {
                     isProcessing = false;
                     lastScannedToken = null;
-                    cameraFrame.classList.remove('success', 'error');
-                    cameraFrame.classList.add('scanning');
+                    if (cameraFrame) cameraFrame.className = 'scanning';
                 }, 2000);
             });
         });
     }
 
     // ==========================================
-    // ADD TO LIST
+    // INITIAL LOAD & SYNC
     // ==========================================
-    function addToList(user) {
-        // Remove empty state if exists
-        const emptyState = document.querySelector('.empty-state');
-        if (emptyState) {
-            emptyState.remove();
-        }
-
-        // Add to array
-        absensiList.push(user);
-
-        // Update count
-        document.getElementById('attendanceCount').textContent = absensiList.length;
-
-        // Add item
+    const allUsers = @json($users);
+    
+    function refreshLists() {
         const list = document.getElementById('absensiList');
-        const item = document.createElement('div');
-        item.className = 'attendance-item';
-        item.innerHTML = `
-            <div class="attendance-icon">
-                ✓
-            </div>
-            <div class="attendance-info">
-                <div class="attendance-name">${user.name}</div>
-                <div class="attendance-email">${user.email}</div>
-            </div>
-            <div class="attendance-time">
-                <i class="fas fa-clock"></i>
-                ${user.waktu_absen}
-            </div>
-        `;
+        const missingList = document.getElementById('missingList');
+        const countBadge = document.getElementById('attendanceCount');
+        const missingBadge = document.getElementById('missingCount');
 
-        list.insertBefore(item, list.firstChild);
-    }
-
-    // ==========================================
-    // LOAD EXISTING LIST
-    // ==========================================
-    fetch("{{ route('sekretaris.absensi.list', $form->id) }}")
+        fetch("{{ route('sekretaris.absensi.list', $form->id) }}")
         .then(res => res.json())
         .then(data => {
-            if (data.success && data.absensi.length > 0) {
-                document.querySelector('.empty-state')?.remove();
+            if (countBadge) countBadge.textContent = data.statistik.total_hadir;
+            if (missingBadge) missingBadge.textContent = data.statistik.total_tidak_hadir;
 
-                data.absensi.reverse().forEach(item => {
-                    absensiList.push(item.user);
+            if (list) list.innerHTML = '';
+            if (missingList) missingList.innerHTML = '';
 
-                    const list = document.getElementById('absensiList');
-                    const attendanceItem = document.createElement('div');
-                    attendanceItem.className = 'attendance-item';
-                    attendanceItem.innerHTML = `
-                        <div class="attendance-icon">
-                            ✓
-                        </div>
-                        <div class="attendance-info">
-                            <div class="attendance-name">${item.user.name}</div>
-                            <div class="attendance-email">${item.user.email}</div>
-                        </div>
-                        <div class="attendance-time">
-                            <i class="fas fa-clock"></i>
-                            ${item.waktu_absen}
-                        </div>
-                    `;
-                    list.appendChild(attendanceItem);
-                });
-
-                document.getElementById('attendanceCount').textContent = absensiList.length;
+            if (data.absensi.length === 0) {
+                if (list) list.innerHTML = `<div class="empty-state text-center py-4"><p>Belum ada yang hadir</p></div>`;
             }
-        });
+
+            // Populate Present
+            data.absensi.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'attendance-item';
+                div.innerHTML = `
+                    <div class="attendance-icon text-success border border-success"><i class="fas fa-check"></i></div>
+                    <div class="attendance-info">
+                        <div class="attendance-name font-weight-bold text-dark">${item.user.name}</div>
+                        <div class="attendance-email small text-muted">${item.user.email}</div>
+                    </div>
+                    <div class="attendance-time bg-light px-2 py-1 rounded small">
+                        ${item.waktu_absen}
+                    </div>
+                `;
+                if (list) list.appendChild(div);
+            });
+
+            // Populate Missing
+            const presentIds = data.absensi.map(a => a.user.id);
+            const missingUsers = allUsers.filter(u => !presentIds.includes(u.id));
+
+            if (missingUsers.length === 0) {
+                if (missingList) missingList.innerHTML = `<div class="empty-state text-center py-4 text-success"><i class="fas fa-check-circle fa-2x mb-2"></i><p>Semua sudah hadir!</p></div>`;
+            }
+
+            missingUsers.forEach(user => {
+                const div = document.createElement('div');
+                div.className = 'attendance-item border-left-danger shadow-sm mb-2';
+                div.style.backgroundColor = '#fff5f5';
+                div.innerHTML = `
+                    <div class="attendance-icon text-danger mr-3"><i class="fas fa-times"></i></div>
+                    <div class="attendance-info">
+                        <div class="attendance-name font-weight-bold text-dark">${user.name}</div>
+                        <div class="attendance-email small text-muted">${user.role.toUpperCase()}</div>
+                    </div>
+                `;
+                if (missingList) missingList.appendChild(div);
+            });
+        })
+        .catch(err => console.error("Refresh error:", err));
+    }
+
+    function addToList(user) {
+        refreshLists();
+    }
+
+    // Initial load
+    refreshLists();
 });
 </script>
 

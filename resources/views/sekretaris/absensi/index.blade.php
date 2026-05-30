@@ -44,7 +44,18 @@
                            class="btn-action btn-cek">
                             Cek Absensi
                         </a>
-
+                        
+                        <!-- IZIN ABSENSI -->
+                        <a href="{{ route('sekretaris.izin.list') }}"
+                           class="btn-action" style="background-color: #f6c23e; color: #fff; position: relative;">
+                            Izin Absensi
+                            @if($form->pending_izin_count > 0)
+                                <span class="badge badge-danger" style="position: absolute; top: -5px; right: -5px; border-radius: 50%; padding: 4px 6px; font-size: 0.7rem;">
+                                    {{ $form->pending_izin_count }}
+                                </span>
+                            @endif
+                        </a>
+           
                         <!-- PROSES DENDA -->
                         <a href="{{ route('sekretaris.absensi.proses_denda', $form->id) }}"
                            class="btn-action btn-denda"

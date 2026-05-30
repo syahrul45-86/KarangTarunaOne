@@ -401,8 +401,12 @@
                                 </td>
                             @endforeach
                             <td>
-                                @php $belumBayar = $tahun->tanggal->count() - $user->catatanArisan->count(); @endphp
-                                <span class="counter-badge {{ $belumBayar == 0 ? 'zero' : '' }}">{{ $belumBayar }}</span>
+                                @php 
+                                    $tanggalIds = $tahun->tanggal->pluck('id')->toArray();
+                                    $sudahBayarTahunIni = $user->catatanArisan->whereIn('tanggal_id', $tanggalIds)->count();
+                                    $belumBayar = count($tanggalIds) - $sudahBayarTahunIni; 
+                                @endphp
+                                <span class="counter-badge {{ $belumBayar <= 0 ? 'zero' : '' }}">{{ max(0, $belumBayar) }}</span>
                             </td>
                         </tr>
                     @endforeach
@@ -417,8 +421,12 @@
             <div class="member-card" data-name="{{ strtolower($user->name) }}">
                 <div class="member-card-header">
                     <span>👤 {{ $user->name }}</span>
-                    @php $belumBayar = $tahun->tanggal->count() - $user->catatanArisan->count(); @endphp
-                    <span class="counter-badge {{ $belumBayar == 0 ? 'zero' : '' }} mobile-counter" data-user="{{ $user->id }}">{{ $belumBayar }}</span>
+                    @php 
+                        $tanggalIds = $tahun->tanggal->pluck('id')->toArray();
+                        $sudahBayarTahunIni = $user->catatanArisan->whereIn('tanggal_id', $tanggalIds)->count();
+                        $belumBayar = count($tanggalIds) - $sudahBayarTahunIni; 
+                    @endphp
+                    <span class="counter-badge {{ $belumBayar <= 0 ? 'zero' : '' }} mobile-counter" data-user="{{ $user->id }}">{{ max(0, $belumBayar) }}</span>
                 </div>
                 <div class="member-card-content">
                     @foreach($tahun->tanggal as $tgl)

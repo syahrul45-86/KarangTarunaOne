@@ -645,7 +645,7 @@
             <div class="bendahara-denda-list">
                 <h2 class="bendahara-section-title">
                     <i class="fas fa-exclamation-circle"></i>
-                    Denda Tertunggak
+                    Denda Tertunggak (Absensi)
                 </h2>
 
                 @forelse($dendaTertunggak as $denda)
@@ -673,6 +673,32 @@
                     </a>
                 </div>
                 @endif
+            </div>
+
+            <!-- Tunggakan Arisan -->
+            <div class="bendahara-denda-list" style="margin-top: 30px;">
+                <h2 class="bendahara-section-title" style="color: #f59e0b; font-size: 16px;">
+                    <i class="fas fa-piggy-bank"></i>
+                    Tunggakan Arisan (Top 5)
+                </h2>
+                <div class="mb-3 text-right">
+                    <span class="badge badge-warning px-3 py-2" style="font-size: 0.9rem; background-color: #f59e0b; color: white;">Total Seluruhnya: Rp <span class="bendahara-stat-value" style="color: white; font-size: 1rem;">{{ $totalNominalTunggakanArisan }}</span></span>
+                </div>
+
+                @forelse($topTunggakanArisan as $tunggakan)
+                <div class="bendahara-denda-item" style="background: #fffbeb; border-left: 4px solid #f59e0b;">
+                    <div class="bendahara-denda-info">
+                        <h4>{{ $tunggakan->user->name }}</h4>
+                        <p>Menunggak {{ $tunggakan->unpaid_count }} Bulan</p>
+                    </div>
+                    <div class="bendahara-denda-amount" style="color: #f59e0b;">Rp {{ number_format($tunggakan->nominal, 0, ',', '.') }}</div>
+                </div>
+                @empty
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-check-circle fa-3x mb-3 d-block" style="color: #16a34a;"></i>
+                    Semua arisan lunas
+                </div>
+                @endforelse
             </div>
         </div>
     </div>
