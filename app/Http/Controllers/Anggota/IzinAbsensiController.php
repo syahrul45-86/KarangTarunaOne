@@ -14,11 +14,25 @@ class IzinAbsensiController extends Controller
     // Show form list for current user to submit izin
     public function index()
     {
-        // Ambil form absensi yang masih dalam rentang tanggal hari ini dan sesuai RT anggota
+        $now = now();
         $activeForms = AbsensiForm::where('rt_id', auth()->user()->rt_id)
-            ->whereDate('tanggal', '>=', now()->toDateString())
+            ->whereDate('tanggal', '>=', $now->toDateString())
             ->orderBy('tanggal', 'asc')
-            ->get();
+            ->get()
+            ->filter(function ($form) use ($now) {
+                // Hilangkan dari daftar jika waktu kegiatan sudah selesai
+                $waktuSelesai = \Carbon\Carbon::parse($form->tanggal . ' ' . $form->jam_selesai);
+                if ($now->greaterThan($waktuSelesai)) {
+                    return false;
+                }
+
+                // Hilangkan dari daftar jika user sudah mengajukan izin
+                $sudahIzin = \App\Models\IzinAbsensi::where('form_id', $form->id)
+                    ->where('user_id', auth()->id())
+                    ->exists();
+                
+                return !$sudahIzin;
+            });
 
         // Ambil izin yang sudah diajukan user ini
         $myIzin = IzinAbsensi::where('user_id', auth()->id())

@@ -473,12 +473,7 @@
                 <h1 class="bendahara-greeting">💰 Selamat Datang, {{ $bendahara->name }}!</h1>
                 <p class="bendahara-subtitle mb-0">Dashboard Keuangan RT - Kelola kas dan transaksi dengan mudah</p>
             </div>
-            <div class="bendahara-header-actions">
-                <a href="{{ route('bendahara.profile.index') }}" class="bendahara-btn-report">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Profile</span>
-                </a>
-            </div>
+            
         </div>
     </div>
 

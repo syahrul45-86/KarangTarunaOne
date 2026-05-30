@@ -35,9 +35,18 @@
             </li>
 
             @php
-            $activeFormsCount = \App\Models\AbsensiForm::where('rt_id', auth()->user()->rt_id)
-            ->whereDate('tanggal', '>=', now()->toDateString())
-            ->count();
+                $now = now();
+                $activeFormsCount = \App\Models\AbsensiForm::where('rt_id', auth()->user()->rt_id)
+                    ->whereDate('tanggal', '>=', $now->toDateString())
+                    ->get()
+                    ->filter(function($form) use ($now) {
+                        $waktuSelesai = \Carbon\Carbon::parse($form->tanggal . ' ' . $form->jam_selesai);
+                        if ($now->greaterThan($waktuSelesai)) return false;
+                        
+                        return !\App\Models\IzinAbsensi::where('form_id', $form->id)
+                            ->where('user_id', auth()->id())
+                            ->exists();
+                    })->count();
             @endphp
             <!-- Nav Item - Izin Absensi -->
             <li class="nav-item {{ request()->routeIs('user.izin.*') ? 'active' : '' }}">

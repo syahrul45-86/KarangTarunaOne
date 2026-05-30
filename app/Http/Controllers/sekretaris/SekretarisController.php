@@ -43,13 +43,37 @@ class SekretarisController extends Controller
         // Recent Activity
         $recentForms = AbsensiForm::orderBy('created_at', 'desc')->take(5)->get();
 
+        // Anggota Absen Terakhir (Mereka yang tidak hadir & tidak izin pada kegiatan terakhir)
+        $absenTerakhir = collect();
+        if ($latestForm) {
+            $hadirUserIds = Absensi::where('form_id', $latestForm->id)->pluck('user_id');
+            $izinUserIds = \App\Models\IzinAbsensi::where('form_id', $latestForm->id)
+                            ->where('status', 'approved')
+                            ->pluck('user_id');
+            
+            $absenUsers = User::where('rt_id', $rt_id)
+                ->whereIn('role', ['anggota', 'sekretaris', 'bendahara'])
+                ->whereNotIn('id', $hadirUserIds)
+                ->whereNotIn('id', $izinUserIds)
+                ->get();
+
+            foreach ($absenUsers as $user) {
+                $absenTerakhir->push((object)[
+                    'user' => $user,
+                    'form' => $latestForm,
+                    'created_at' => $latestForm->tanggal
+                ]);
+            }
+        }
+
         return view('sekretaris.dashboard', compact(
             'sekretaris', 
             'totalAnggota', 
             'latestForm', 
             'recentAttendance', 
             'averageAttendance',
-            'recentForms'
+            'recentForms',
+            'absenTerakhir'
         ));
     }
 }
