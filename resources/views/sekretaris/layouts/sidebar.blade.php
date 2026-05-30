@@ -95,9 +95,18 @@
             </li>
 
             @php
+                $now = now();
                 $activeFormsCount = \App\Models\AbsensiForm::where('rt_id', auth()->user()->rt_id)
-                    ->whereDate('tanggal', '>=', now()->toDateString())
-                    ->count();
+                    ->whereDate('tanggal', '>=', $now->toDateString())
+                    ->get()
+                    ->filter(function($form) use ($now) {
+                        $waktuSelesai = \Carbon\Carbon::parse($form->tanggal . ' ' . $form->jam_selesai);
+                        if ($now->greaterThan($waktuSelesai)) return false;
+                        
+                        return !\App\Models\IzinAbsensi::where('form_id', $form->id)
+                            ->where('user_id', auth()->id())
+                            ->exists();
+                    })->count();
             @endphp
             <li class="nav-item {{ request()->routeIs('user.izin.*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('user.izin.index') }}">

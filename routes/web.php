@@ -328,9 +328,12 @@ Route::middleware(['auth', 'role:anggota'])->group(function(){
 
     Route::get('/anggota/qrcode', [QrcodeController::class, 'show'])->name('anggota.qrcode.show');
 
-    // =========================
-    // Izin Absensi (Global untuk semua role)
-    // =========================
+});
+
+// =========================
+// Izin Absensi (Global untuk semua role)
+// =========================
+Route::middleware(['auth'])->group(function () {
     Route::get('/izin-absensi', [App\Http\Controllers\Anggota\IzinAbsensiController::class, 'index'])->name('user.izin.index');
     Route::post('/izin-absensi/store', [App\Http\Controllers\Anggota\IzinAbsensiController::class, 'store'])->name('user.izin.store');
 });
