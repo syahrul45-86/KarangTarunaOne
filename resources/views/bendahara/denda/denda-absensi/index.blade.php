@@ -63,8 +63,10 @@
                     <td>
                         @if($row->status == 'belum_bayar')
                             <span class="denda-badge denda-badge-belum">Belum Bayar</span>
-                        @else
+                        @elseif(strtolower($row->status) == 'lunas')
                             <span class="denda-badge denda-badge-lunas">Lunas</span>
+                        @else
+                            <span class="denda-badge denda-badge-belum" style="background-color: #f59e0b; color: #fff;">{{ $row->status }}</span>
                         @endif
                     </td>
                     <td>{{ $row->created_at->format('d-m-Y') }}</td>
@@ -132,8 +134,10 @@
                         <div class="denda-info-value">
                             @if($row->status == 'belum_bayar')
                                 <span class="denda-badge denda-badge-belum">Belum Bayar</span>
-                            @else
+                            @elseif(strtolower($row->status) == 'lunas')
                                 <span class="denda-badge denda-badge-lunas">Lunas</span>
+                            @else
+                                <span class="denda-badge denda-badge-belum" style="background-color: #f59e0b; color: #fff;">{{ $row->status }}</span>
                             @endif
                         </div>
                     </div>

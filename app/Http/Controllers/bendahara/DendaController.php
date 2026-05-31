@@ -32,7 +32,7 @@ class DendaController extends Controller
 
         $data = [];
         foreach ($users as $u) {
-            $belum = Denda::where('user_id', $u->id)->where('status', 'belum_bayar')->sum('jumlah_denda');
+            $belum = Denda::where('user_id', $u->id)->where('status', '!=', 'lunas')->sum('jumlah_denda');
 
             $expectedForUser = ArisanTanggal::where('tanggal', '>=', $u->created_at->startOfMonth())->count();
             $paidCount = CatatanArisan::where('user_id', $u->id)->count();
@@ -66,7 +66,7 @@ class DendaController extends Controller
 
         $data = [];
         foreach ($users as $u) {
-            $belum = Denda::where('user_id', $u->id)->where('status', 'belum_bayar')->sum('jumlah_denda');
+            $belum = Denda::where('user_id', $u->id)->where('status', '!=', 'lunas')->sum('jumlah_denda');
 
             $expectedForUser = ArisanTanggal::where('tanggal', '>=', $u->created_at->startOfMonth())->count();
             $paidCount = CatatanArisan::where('user_id', $u->id)->count();
@@ -141,7 +141,7 @@ class DendaController extends Controller
     ]);
 
     $existing = Denda::where('user_id', $request->user_id)
-        ->where('status', 'belum_bayar')
+        ->where('status', '!=', 'lunas')
         ->first();
 
     if ($existing) {
@@ -180,12 +180,12 @@ public function store(Request $request)
     $request->validate([
         'user_id' => 'required|exists:users,id',
         'jumlah_denda' => 'required|numeric|min:0',
-        'jenis' => 'required|in:manual,kegiatan',
+        'jenis' => 'required|string',
     ]);
 
     // cari denda aktif apapun jenisnya
     $existing = Denda::where('user_id', $request->user_id)
-        ->where('status', 'belum_bayar')
+        ->where('status', '!=', 'lunas')
         ->first();
 
     if ($existing) {
@@ -224,6 +224,18 @@ public function store(Request $request)
 
 
     // =========================
+    // EDIT
+    // =========================
+    public function edit($id)
+    {
+        $denda = Denda::findOrFail($id);
+        $bendahara = auth()->user();
+        $users = User::where('rt_id', $bendahara->rt_id)->get();
+
+        return view('bendahara.denda.denda-absensi.edit', compact('denda', 'users'));
+    }
+
+    // =========================
     // 5. UPDATE
     // =========================
     public function update(Request $request, $id)
@@ -231,19 +243,28 @@ public function store(Request $request)
         $denda = Denda::findOrFail($id);
 
         $request->validate([
-            'user_id' => 'required',
-            'jumlah_denda' => 'required|numeric|min:0',
-            'status' => 'required|in:belum_bayar,lunas',
+            'nominal_bayar' => 'required|numeric|min:0',
         ]);
 
-        // Update data
-        $denda->update([
-            'user_id' => $request->user_id,
-            'jumlah_denda' => $request->jumlah_denda,
-            'status' => $request->status,
-        ]);
+        $bayar = $request->nominal_bayar;
 
-        return redirect()->route('bendahara.denda.denda-absensi.index')->with('success', 'Denda berhasil diperbarui.');
+        if ($bayar > 0) {
+            if ($bayar >= $denda->jumlah_denda) {
+                // Lunas
+                $denda->update([
+                    'jumlah_denda' => 0,
+                    'status' => 'lunas',
+                ]);
+            } else {
+                // Cicilan (Sisa denda berkurang)
+                $denda->update([
+                    'jumlah_denda' => $denda->jumlah_denda - $bayar,
+                    'status' => 'belum_bayar',
+                ]);
+            }
+        }
+
+        return redirect()->route('bendahara.denda.absensi')->with('success', 'Pembayaran denda berhasil dicatat.');
     }
 
 }

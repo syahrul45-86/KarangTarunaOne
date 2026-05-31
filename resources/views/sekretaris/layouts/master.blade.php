@@ -123,7 +123,8 @@
 <script src="{{ asset('template/js/table_RT.js') }}"></script>
 <script src="{{ asset('template/js/table_adminrt.js') }}"></script>
 <script src="{{ asset('template/js/catatan-absensi.js') }}"></script>
-<script src="{{ asset('template/js/spin.js') }}"></script>
+
+@stack('scripts')
 
 </body>
 </html>

@@ -48,16 +48,11 @@
                         </td>
 
                         <td>
-                            <select name="status" class="form-control">
-                                <option value="belum_bayar"
-                                    {{ $item->status == 'belum_bayar' ? 'selected' : '' }}>
-                                    Belum Bayar
-                                </option>
-                                <option value="lunas"
-                                    {{ $item->status == 'lunas' ? 'selected' : '' }}>
-                                    Lunas
-                                </option>
-                            </select>
+                            <input type="text"
+                                   name="status"
+                                   value="{{ $item->status }}"
+                                   class="form-control"
+                                   placeholder="Cth: Cicil 5000" required>
                         </td>
 
                         <td class="d-flex gap-2">

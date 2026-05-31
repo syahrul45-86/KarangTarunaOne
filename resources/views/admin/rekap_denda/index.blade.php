@@ -9,11 +9,6 @@
     <div class="rekap-denda-header">
         <h3>💰 Rekap Tunggakan (Denda & Arisan)</h3>
         <div class="rekap-denda-btn-group">
-
-            <a href="{{ route('admin.denda.per_anggota') }}" class="rekap-denda-btn rekap-denda-btn-secondary">
-                <span>👤</span>
-                <span>Rekap Per Anggota</span>
-            </a>
         </div>
     </div>
 
@@ -39,7 +34,6 @@
                         <th>Tunggakan Denda</th>
                         <th>Tunggakan Arisan</th>
                         <th>Total Keseluruhan</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,11 +56,6 @@
                             <span class="rekap-denda-amount" style="color: #dc2626; font-weight: bold; font-size: 1.1em;">
                                 Rp {{ number_format($row['total_semua'], 0, ',', '.') }}
                             </span>
-                        </td>
-                        <td data-label="Aksi">
-                            <a href="{{ route('admin.denda.show', $row['user']->id) }}" class="rekap-denda-btn-detail">
-                                👁️ Detail
-                            </a>
                         </td>
                     </tr>
                     @empty

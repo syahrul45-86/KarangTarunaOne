@@ -20,14 +20,37 @@
         });
 
         function loadSavedData() {
-            const savedData = localStorage.getItem('arisanSelectedMembers');
-            if (savedData) {
-                selectedMembers = JSON.parse(savedData);
+            if (typeof savedSpinMembers !== 'undefined' && savedSpinMembers.length > 0) {
+                selectedMembers = savedSpinMembers;
                 updateSelectedMembersList();
                 updateSelectOptions();
                 if (selectedMembers.length > 0) {
                     createRodaWheel(selectedMembers.map(m => m.name));
                 }
+            } else {
+                const savedData = localStorage.getItem('arisanSelectedMembers');
+                if (savedData) {
+                    selectedMembers = JSON.parse(savedData);
+                    updateSelectedMembersList();
+                    updateSelectOptions();
+                    if (selectedMembers.length > 0) {
+                        createRodaWheel(selectedMembers.map(m => m.name));
+                    }
+                }
+            }
+        }
+
+        function saveToDb() {
+            if (typeof spinSaveUrl !== 'undefined') {
+                fetch(spinSaveUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ members: selectedMembers })
+                });
             }
         }
 
@@ -84,6 +107,7 @@
 
             selectedMembers.push({ id: memberId, name: memberName });
             localStorage.setItem('arisanSelectedMembers', JSON.stringify(selectedMembers));
+            saveToDb();
 
             updateSelectedMembersList();
             updateSelectOptions();
@@ -92,6 +116,7 @@
         function removeMember(memberId) {
             selectedMembers = selectedMembers.filter(m => m.id !== memberId);
             localStorage.setItem('arisanSelectedMembers', JSON.stringify(selectedMembers));
+            saveToDb();
 
             updateSelectedMembersList();
             updateSelectOptions();
@@ -178,6 +203,7 @@
                         // Hapus pemenang dari selectedMembers
                         selectedMembers = selectedMembers.filter(m => m.name !== winnerName);
                         localStorage.setItem('arisanSelectedMembers', JSON.stringify(selectedMembers));
+                        saveToDb();
 
                         // Tampilkan pemenang
                         displayRodaWinner(winnerName);
@@ -241,6 +267,7 @@
             if (confirm("Yakin ingin mereset semua data?")) {
                 selectedMembers = [];
                 localStorage.removeItem('arisanSelectedMembers');
+                saveToDb();
                 updateSelectedMembersList();
                 updateSelectOptions();
                 if (rodaSvg) {

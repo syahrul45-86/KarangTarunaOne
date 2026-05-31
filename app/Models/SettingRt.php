@@ -13,6 +13,7 @@ class SettingRT extends Model
         'iuran_arisan',
         'denda_absensi',
         'denda_arisan',
+        'spin_members',
     ];
 
     // Relasi ke tabel RT

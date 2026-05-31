@@ -138,14 +138,8 @@ Route::get('/user-qr/{userId}', [TambahAnggotaController::class, 'getUserQR'])->
     Route::get('/admin/rekab-denda', [RekapDendaController::class, 'index'])
         ->name('admin.denda.index');
 
-    Route::get('/admin/rekab-denda/show/{id}', [RekapDendaController::class, 'show'])
-        ->name('admin.denda.show');
-
     Route::get('/admin/rekab-denda/grafik', [RekapDendaController::class, 'grafik'])
         ->name('admin.denda.grafik');
-
-    Route::get('/admin/rekab-denda/per-anggota', [RekapDendaController::class, 'perAnggota'])
-        ->name('admin.denda.per_anggota');
 
     Route::get('/setting-rt', [SettingRTController::class, 'index'])->name('admin.setting_rt.index');
     Route::post('/setting-rt/update', [SettingRTController::class, 'update'])->name('admin.setting_rt.update');
@@ -310,6 +304,7 @@ Route::post('/arisan/anggota/remove', [CatatanArisanController::class, 'removeAn
     ->name('sekretaris.anggota.remove');
 
     Route::get('sekretaris/spin', [SpinController::class, 'index'])->name('sekretaris.spin.index');
+    Route::post('sekretaris/spin/save', [SpinController::class, 'save'])->name('sekretaris.spin.save');
 
     // =========================
     // Izin Absensi Management (Sekretaris)
