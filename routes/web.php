@@ -80,22 +80,13 @@ Route::middleware(['auth', 'role:admin'])->group(function(){
         ->name('admin.idcard.generate');
     Route::post('/admin/idcard/save', [TambahAnggotaController::class, 'saveIdCard'])->name('admin.idcard.save');
     
-    Route::get('/admin/user-qr/{id}', function ($id) {
-    $user = \App\Models\User::findOrFail($id);
-
-    return response()->json([
-        'qr' => asset('storage/' . $user->qr_code)
-    ]);
-
-
-    })->name('admin.user.qr');
     Route::get('/admin/id-card/preview',
         [TambahAnggotaController::class, 'previewIdCard']
     )->name('admin.idcard.preview');
 
-
 // Di grup admin
 Route::get('/user-qr/{userId}', [TambahAnggotaController::class, 'getUserQR'])->name('admin.user.qr');
+
 
     Route::delete('/admin/{id}/AnggotaRT', [TambahAnggotaController::class, 'destroy'])->name('admin.AnggotaRT.destroy');
     Route::get('/rekap-absensi', [RekapAbsensiControllers::class, 'index'])
