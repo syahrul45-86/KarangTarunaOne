@@ -1,6 +1,6 @@
 @extends('sekretaris.layouts.master')
 
-@section('title', 'Catatan Arisan')
+@section('title', 'Spin Arisan')
 
 @section('content')
 
@@ -35,8 +35,9 @@
             {{-- Status simpan --}}
             <div id="roda-save-status" style="font-size: 13px; min-height: 20px; margin-bottom: 4px;"></div>
 
-            <button type="button" id="roda-generate-wheel" class="roda-btn roda-btn-primary" disabled>
-                ✨ Buat Roda
+            {{-- Tombol Simpan (menggantikan "Buat Roda") --}}
+            <button type="button" id="roda-save-btn" class="roda-btn roda-btn-primary" disabled>
+                💾 Simpan & Tampilkan Roda
             </button>
 
             <button type="button" id="roda-reset-names" class="roda-btn roda-btn-secondary">
@@ -54,7 +55,7 @@
     </div>
 </div>
 
-{{-- Data spin: @json tidak akan dirusak editor karena ini Blade directive seperti @foreach --}}
+{{-- Data spin dari server --}}
 <div id="spin-config" hidden
     data-members='@json($savedMembers ?? [])'
     data-save-url="{{ route('sekretaris.spin.save') }}"
@@ -66,40 +67,38 @@
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script>
     (function() {
-        // Data dari server — dibaca dari data-attribute HTML, tidak bisa dirusak editor
         const _cfg = document.getElementById('spin-config').dataset;
         var savedSpinMembers = JSON.parse(_cfg.members || '[]');
-        var spinSaveUrl = _cfg.saveUrl;
-        var csrfToken = _cfg.csrf;
+        var spinSaveUrl      = _cfg.saveUrl;
+        var csrfToken        = _cfg.csrf;
 
-        let rodaSvg, rodaContainer, rodaVis, rodaPie, rodaArc, rodaOldRotation = 0,
-            rodaRotation = 0,
-            rodaPicked = 0;
+        let rodaSvg, rodaContainer, rodaVis, rodaPie, rodaArc,
+            rodaOldRotation = 0, rodaRotation = 0, rodaPicked = 0;
         const rodaColor = d3.scale.category20();
         let selectedMembers = [];
 
         // =========================================
-        // INISIALISASI: Load data dari server dulu
+        // INISIALISASI: Load data dari DB
         // =========================================
         document.addEventListener('DOMContentLoaded', function() {
             if (savedSpinMembers && savedSpinMembers.length > 0) {
                 selectedMembers = savedSpinMembers;
             }
-
             updateSelectedMembersList();
             updateSelectOptions();
 
+            // Langsung tampilkan roda dari data tersimpan
             if (selectedMembers.length > 0) {
                 createRodaWheel(selectedMembers.map(m => m.name));
+                showStatus('✅ Data dimuat dari database (' + selectedMembers.length + ' peserta)', '#48bb78');
             }
         });
 
         // =========================================
-        // SIMPAN KE DATABASE
+        // SIMPAN KE DATABASE (saat tombol Simpan diklik)
         // =========================================
-        function saveToDb() {
-            const statusEl = document.getElementById('roda-save-status');
-            if (statusEl) statusEl.innerHTML = '<span style="color:#a0aec0;">⏳ Menyimpan...</span>';
+        function saveToDb(callback) {
+            showStatus('⏳ Menyimpan ke database...', '#a0aec0');
 
             fetch(spinSaveUrl, {
                 method: 'POST',
@@ -108,27 +107,31 @@
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    members: selectedMembers
-                })
-            }).then(function(res) {
-                return res.json();
-            }).then(function(data) {
-                if (statusEl) {
-                    if (data.success) {
-                        statusEl.innerHTML = '<span style="color:#48bb78;">✅ Tersimpan (' + data.count + ' peserta)</span>';
-                    } else {
-                        statusEl.innerHTML = '<span style="color:#fc8181;">❌ Gagal simpan: ' + (data.error || 'Unknown') + '</span>';
-                    }
-                    setTimeout(() => { if (statusEl) statusEl.innerHTML = ''; }, 3000);
+                body: JSON.stringify({ members: selectedMembers })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showStatus('✅ Tersimpan! (' + data.count + ' peserta)', '#48bb78');
+                    if (typeof callback === 'function') callback();
+                } else {
+                    showStatus('❌ Gagal: ' + (data.error || 'Unknown error'), '#fc8181');
                 }
-            }).catch(function(err) {
-                console.error('Gagal menyimpan spin members:', err);
-                if (statusEl) {
-                    statusEl.innerHTML = '<span style="color:#fc8181;">❌ Gagal simpan (network error)</span>';
-                    setTimeout(() => { if (statusEl) statusEl.innerHTML = ''; }, 3000);
-                }
+            })
+            .catch(err => {
+                console.error(err);
+                showStatus('❌ Gagal simpan (network error)', '#fc8181');
             });
+        }
+
+        function showStatus(msg, color) {
+            const el = document.getElementById('roda-save-status');
+            if (el) {
+                el.innerHTML = '<span style="color:' + color + ';">' + msg + '</span>';
+                if (color !== '#a0aec0') {
+                    setTimeout(() => { el.innerHTML = ''; }, 4000);
+                }
+            }
         }
 
         // =========================================
@@ -142,15 +145,15 @@
                 } else {
                     container.innerHTML = selectedMembers.map(member =>
                         `<span class="roda-selected-item">
-                        ${member.name}
-                        <span class="roda-remove-item" onclick="removeMember('${member.id}')">✕</span>
-                    </span>`
+                            ${member.name}
+                            <span class="roda-remove-item" onclick="removeMember('${member.id}')">✕</span>
+                        </span>`
                     ).join('');
                 }
             }
 
-            const btn = document.getElementById('roda-generate-wheel');
-            if (btn) btn.disabled = selectedMembers.length === 0;
+            const saveBtn = document.getElementById('roda-save-btn');
+            if (saveBtn) saveBtn.disabled = selectedMembers.length === 0;
         }
 
         function updateSelectOptions() {
@@ -158,16 +161,12 @@
             const selectedIds = selectedMembers.map(m => String(m.id));
             selectElement.value = "";
             Array.from(selectElement.options).forEach(option => {
-                if (option.value && selectedIds.includes(String(option.value))) {
-                    option.style.display = 'none';
-                } else {
-                    option.style.display = 'block';
-                }
+                option.style.display = (option.value && selectedIds.includes(String(option.value))) ? 'none' : 'block';
             });
         }
 
         // =========================================
-        // TAMBAH ANGGOTA
+        // TAMBAH ANGGOTA (hanya ke daftar lokal, belum simpan DB)
         // =========================================
         document.getElementById('roda-add-member').addEventListener('click', function() {
             const selectElement = document.getElementById('roda-anggota-select');
@@ -178,7 +177,7 @@
                 return;
             }
 
-            const memberId = selectedOption.value;
+            const memberId   = selectedOption.value;
             const memberName = selectedOption.getAttribute('data-name');
 
             if (selectedMembers.some(m => String(m.id) === String(memberId))) {
@@ -186,13 +185,10 @@
                 return;
             }
 
-            selectedMembers.push({
-                id: memberId,
-                name: memberName
-            });
-            saveToDb();
+            selectedMembers.push({ id: memberId, name: memberName });
             updateSelectedMembersList();
             updateSelectOptions();
+            showStatus('💡 Tekan "Simpan & Tampilkan Roda" untuk menyimpan ke database', '#f6e05e');
         });
 
         // =========================================
@@ -200,9 +196,9 @@
         // =========================================
         window.removeMember = function(memberId) {
             selectedMembers = selectedMembers.filter(m => String(m.id) !== String(memberId));
-            saveToDb();
             updateSelectedMembersList();
             updateSelectOptions();
+            showStatus('💡 Tekan "Simpan & Tampilkan Roda" untuk menyimpan perubahan', '#f6e05e');
 
             if (rodaSvg && selectedMembers.length > 0) {
                 createRodaWheel(selectedMembers.map(m => m.name));
@@ -213,21 +209,31 @@
         };
 
         // =========================================
+        // TOMBOL SIMPAN & TAMPILKAN RODA
+        // =========================================
+        document.getElementById('roda-save-btn').addEventListener('click', function() {
+            if (selectedMembers.length === 0) {
+                alert("⚠️ Tambahkan minimal satu anggota!");
+                return;
+            }
+            saveToDb(function() {
+                // Setelah berhasil simpan, tampilkan roda
+                createRodaWheel(selectedMembers.map(m => m.name));
+            });
+        });
+
+        // =========================================
         // BUAT RODA
         // =========================================
         function createRodaWheel(names) {
             if (rodaSvg) {
                 rodaSvg.remove();
                 rodaOldRotation = 0;
-                rodaRotation = 0;
+                rodaRotation    = 0;
             }
 
-            const data = names.map((name, index) => ({
-                label: name,
-                value: index + 1
-            }));
-            const w = 500;
-            const h = 500;
+            const data = names.map((name, index) => ({ label: name, value: index + 1 }));
+            const w = 500, h = 500;
             const r = Math.min(w, h) / 2;
 
             rodaSvg = d3.select('#roda-chart')
@@ -275,28 +281,24 @@
             function spinRoda() {
                 document.getElementById('roda-spin-button').removeEventListener('click', spinRoda);
 
-                const ps = 360 / data.length;
-                // 15-20 putaran penuh agar terasa dramatis sebelum melambat
-                const fullSpins = Math.floor(Math.random() * 6) + 15;
-                const extraDeg = Math.floor(Math.random() * data.length) * ps;
-                rodaRotation = (fullSpins * 360) + extraDeg;
+                const ps         = 360 / data.length;
+                const fullSpins  = Math.floor(Math.random() * 6) + 15;
+                const extraDeg   = Math.floor(Math.random() * data.length) * ps;
+                rodaRotation     = (fullSpins * 360) + extraDeg;
 
-                // Tentukan pemenang dari posisi akhir
                 const finalAngle = rodaRotation % 360;
-                rodaPicked = Math.round(data.length - finalAngle / ps);
-                rodaPicked = rodaPicked >= data.length ? (rodaPicked % data.length) : rodaPicked;
-
-                rodaRotation += 90 - Math.round(ps / 2);
+                rodaPicked       = Math.round(data.length - finalAngle / ps);
+                rodaPicked       = rodaPicked >= data.length ? (rodaPicked % data.length) : rodaPicked;
+                rodaRotation    += 90 - Math.round(ps / 2);
 
                 const startAngle = rodaOldRotation;
-                const endAngle = rodaRotation;
+                const endAngle   = rodaRotation;
 
                 rodaVis.transition()
                     .duration(7000)
                     .ease('cubic-out')
                     .attrTween("transform", function() {
                         return function(t) {
-                            // t sudah di-ease oleh D3 cubic-out, cukup interpolasi linear
                             rodaOldRotation = startAngle + (endAngle - startAngle) * t;
                             return `rotate(${rodaOldRotation})`;
                         };
@@ -304,32 +306,29 @@
                     .each("end", function() {
                         const winnerName = data[rodaPicked].label;
 
+                        // Hapus pemenang dari daftar & simpan ke DB
                         selectedMembers = selectedMembers.filter(m => m.name !== winnerName);
-                        saveToDb();
-
-                        displayRodaWinner(winnerName);
-
-                        setTimeout(() => {
-                            updateSelectedMembersList();
-                            updateSelectOptions();
-
-                            if (selectedMembers.length > 0) {
-                                createRodaWheel(selectedMembers.map(m => m.name));
-                            } else {
-                                alert("🎊 Semua peserta sudah mendapat giliran!");
-                            }
-                        }, 800);
+                        saveToDb(function() {
+                            displayRodaWinner(winnerName);
+                            setTimeout(() => {
+                                updateSelectedMembersList();
+                                updateSelectOptions();
+                                if (selectedMembers.length > 0) {
+                                    createRodaWheel(selectedMembers.map(m => m.name));
+                                } else {
+                                    alert("🎊 Semua peserta sudah mendapat giliran!");
+                                }
+                            }, 800);
+                        });
                     });
             }
-
         }
 
         function displayRodaWinner(name) {
             const winnerDisplay = document.getElementById('roda-winner-display');
-            const winnerName = document.getElementById('roda-winner-name');
+            const winnerName    = document.getElementById('roda-winner-name');
             winnerName.textContent = `Selamat ${name}!`;
             winnerDisplay.style.display = 'block';
-
             for (let i = 0; i < 150; i++) {
                 setTimeout(() => createRodaConfetti(), i * 30);
             }
@@ -339,33 +338,24 @@
             const confetti = document.createElement('div');
             confetti.className = 'roda-confetti';
             confetti.style.left = `${Math.random() * 100}vw`;
-            confetti.style.top = `-10px`;
+            confetti.style.top  = `-10px`;
             confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
             confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
-            confetti.style.width = `${Math.random() * 10 + 5}px`;
+            confetti.style.width  = `${Math.random() * 10 + 5}px`;
             confetti.style.height = confetti.style.width;
             document.body.appendChild(confetti);
             setTimeout(() => confetti.remove(), 5000);
         }
 
-        document.getElementById('roda-generate-wheel').addEventListener('click', () => {
-            if (selectedMembers.length === 0) {
-                alert("⚠️ Tambahkan minimal satu anggota!");
-                return;
-            }
-            createRodaWheel(selectedMembers.map(m => m.name));
-        });
-
+        // Reset semua
         document.getElementById('roda-reset-names').addEventListener('click', () => {
-            if (confirm("Yakin ingin mereset semua data?")) {
+            if (confirm("Yakin ingin mereset semua data roda?")) {
                 selectedMembers = [];
-                saveToDb();
-                updateSelectedMembersList();
-                updateSelectOptions();
-                if (rodaSvg) {
-                    rodaSvg.remove();
-                    rodaSvg = null;
-                }
+                saveToDb(function() {
+                    updateSelectedMembersList();
+                    updateSelectOptions();
+                    if (rodaSvg) { rodaSvg.remove(); rodaSvg = null; }
+                });
             }
         });
 
