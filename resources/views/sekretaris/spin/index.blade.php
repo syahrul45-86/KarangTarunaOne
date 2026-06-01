@@ -27,6 +27,13 @@
                 ➕ Tambah ke Roda
             </button>
 
+            {{-- Daftar peserta yang sudah dipilih --}}
+            <div id="roda-selected-members" style="margin: 10px 0; display: flex; flex-wrap: wrap; gap: 6px; min-height: 32px;">
+                <span style="color: #a0aec0; font-size: 14px;">Belum ada peserta</span>
+            </div>
+
+            {{-- Status simpan --}}
+            <div id="roda-save-status" style="font-size: 13px; min-height: 20px; margin-bottom: 4px;"></div>
 
             <button type="button" id="roda-generate-wheel" class="roda-btn roda-btn-primary" disabled>
                 ✨ Buat Roda
@@ -91,6 +98,9 @@
         // SIMPAN KE DATABASE
         // =========================================
         function saveToDb() {
+            const statusEl = document.getElementById('roda-save-status');
+            if (statusEl) statusEl.innerHTML = '<span style="color:#a0aec0;">⏳ Menyimpan...</span>';
+
             fetch(spinSaveUrl, {
                 method: 'POST',
                 headers: {
@@ -101,8 +111,23 @@
                 body: JSON.stringify({
                     members: selectedMembers
                 })
+            }).then(function(res) {
+                return res.json();
+            }).then(function(data) {
+                if (statusEl) {
+                    if (data.success) {
+                        statusEl.innerHTML = '<span style="color:#48bb78;">✅ Tersimpan (' + data.count + ' peserta)</span>';
+                    } else {
+                        statusEl.innerHTML = '<span style="color:#fc8181;">❌ Gagal simpan: ' + (data.error || 'Unknown') + '</span>';
+                    }
+                    setTimeout(() => { if (statusEl) statusEl.innerHTML = ''; }, 3000);
+                }
             }).catch(function(err) {
                 console.error('Gagal menyimpan spin members:', err);
+                if (statusEl) {
+                    statusEl.innerHTML = '<span style="color:#fc8181;">❌ Gagal simpan (network error)</span>';
+                    setTimeout(() => { if (statusEl) statusEl.innerHTML = ''; }, 3000);
+                }
             });
         }
 

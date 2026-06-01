@@ -189,18 +189,14 @@ Route::middleware(['auth', 'role:bendahara'])->group( function() {
     Route::get('/bendahara/denda/absensi', [DendaController::class, 'absensi'])
         ->name('bendahara.denda.absensi');
 
-    Route::get('/bendahara/denda/kegiatan', [DendaController::class, 'kegiatan'])
-        ->name('bendahara.denda.kegiatan');
-
-        Route::prefix('bendahara/denda/kegiatan')
-->name('bendahara.denda.kegiatan.')
-->group(function () {
-
-    Route::get('/', [DendaController::class, 'kegiatan'])->name('index');
-    Route::post('/store', [DendaController::class, 'storeKegiatan'])->name('store');
-    Route::put('/update/{id}', [DendaController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [DendaController::class, 'destroy'])->name('destroy');
-});
+    Route::prefix('bendahara/denda/kegiatan')
+        ->name('bendahara.denda.kegiatan.')
+        ->group(function () {
+            Route::get('/', [DendaController::class, 'kegiatan'])->name('index');
+            Route::post('/store', [DendaController::class, 'storeKegiatan'])->name('store');
+            Route::put('/update/{id}', [DendaController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [DendaController::class, 'destroy'])->name('destroy');
+        });
     // end
 
     Route::get('bendahara/kas', [KasController::class, 'index'])->name('bendahara.kas.index');

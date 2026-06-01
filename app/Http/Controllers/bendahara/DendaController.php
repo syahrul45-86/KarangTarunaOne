@@ -21,7 +21,7 @@ class DendaController extends Controller
         $search = $request->search;
 
         $users = User::where('rt_id', $bendahara->rt_id)
-            ->when($search, function($query) use ($search) {
+            ->when($search, function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%$search%");
             })
             ->get();
@@ -56,7 +56,7 @@ class DendaController extends Controller
         $search = $request->search;
 
         $users = User::where('rt_id', $bendahara->rt_id)
-            ->when($search, function($query) use ($search) {
+            ->when($search, function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%$search%");
             })
             ->get();
@@ -116,7 +116,7 @@ class DendaController extends Controller
     public function kegiatan(Request $request)
     {
         $bendahara = auth()->user();
-         $users = User::all();
+        $users = User::all();
         $search = $request->search;
 
         $denda = Denda::with('user')
@@ -134,30 +134,30 @@ class DendaController extends Controller
         return view('bendahara.denda.denda-kegiatan.index', compact('denda', 'search', 'users'));
     }
     public function storeKegiatan(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'jumlah_denda' => 'required|numeric|min:0',
-    ]);
-
-    $existing = Denda::where('user_id', $request->user_id)
-        ->where('status', '!=', 'lunas')
-        ->first();
-
-    if ($existing) {
-        $existing->jumlah_denda += $request->jumlah_denda;
-        $existing->save();
-    } else {
-        Denda::create([
-            'user_id' => $request->user_id,
-            'jenis' => 'kegiatan',
-            'jumlah_denda' => $request->jumlah_denda,
-            'status' => 'belum_bayar',
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'jumlah_denda' => 'required|numeric|min:0',
         ]);
-    }
 
-    return back()->with('success', 'Denda kegiatan ditambahkan!');
-}
+        $existing = Denda::where('user_id', $request->user_id)
+            ->where('status', '!=', 'lunas')
+            ->first();
+
+        if ($existing) {
+            $existing->jumlah_denda += $request->jumlah_denda;
+            $existing->save();
+        } else {
+            Denda::create([
+                'user_id' => $request->user_id,
+                'jenis' => 'kegiatan',
+                'jumlah_denda' => $request->jumlah_denda,
+                'status' => 'belum_bayar',
+            ]);
+        }
+
+        return back()->with('success', 'Denda kegiatan ditambahkan!');
+    }
 
 
     // =========================
@@ -169,46 +169,45 @@ class DendaController extends Controller
         $users = User::where('rt_id', $bendahara->rt_id)->get();
 
         return view('bendahara.denda.denda-absensi.create', compact('users'));
-
     }
 
     // =========================
     // STORE
     // =========================
-public function store(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'jumlah_denda' => 'required|numeric|min:0',
-        'jenis' => 'required|string',
-    ]);
-
-    // cari denda aktif apapun jenisnya
-    $existing = Denda::where('user_id', $request->user_id)
-        ->where('status', '!=', 'lunas')
-        ->first();
-
-    if ($existing) {
-        // tambah nominal saja
-        $existing->jumlah_denda += $request->jumlah_denda;
-        $existing->save();
-    } else {
-        // baru buat manual/kegiatan
-        Denda::create([
-            'user_id' => $request->user_id,
-            'jenis' => $request->jenis,
-            'jumlah_denda' => $request->jumlah_denda,
-            'status' => 'belum_bayar',
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'jumlah_denda' => 'required|numeric|min:0',
+            'jenis' => 'required|string',
         ]);
-    }
 
-    if ($request->jenis == 'kegiatan') {
-        return redirect()->route('bendahara.denda.kegiatan')->with('success', 'Denda kegiatan berhasil ditambahkan!');
-    }
+        // cari denda aktif apapun jenisnya
+        $existing = Denda::where('user_id', $request->user_id)
+            ->where('status', '!=', 'lunas')
+            ->first();
 
-    return redirect()->route('bendahara.denda.absensi')
-        ->with('success', 'Denda absensi manual berhasil ditambahkan!');
-}
+        if ($existing) {
+            // tambah nominal saja
+            $existing->jumlah_denda += $request->jumlah_denda;
+            $existing->save();
+        } else {
+            // baru buat manual/kegiatan
+            Denda::create([
+                'user_id' => $request->user_id,
+                'jenis' => $request->jenis,
+                'jumlah_denda' => $request->jumlah_denda,
+                'status' => 'belum_bayar',
+            ]);
+        }
+
+        if ($request->jenis == 'kegiatan') {
+            return redirect()->route('bendahara.denda.absensi')->with('success', 'Denda kegiatan berhasil ditambahkan!');
+        }
+
+        return redirect()->route('bendahara.denda.absensi')
+            ->with('success', 'Denda absensi manual berhasil ditambahkan!');
+    }
 
 
 
@@ -266,5 +265,4 @@ public function store(Request $request)
 
         return redirect()->route('bendahara.denda.absensi')->with('success', 'Pembayaran denda berhasil dicatat.');
     }
-
 }
