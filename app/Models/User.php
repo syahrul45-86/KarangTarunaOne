@@ -51,7 +51,12 @@ class User extends Authenticatable
         return $this->role === $roles;
     }
     public function catatanArisan()
-{
-    return $this->hasMany(\App\Models\CatatanArisan::class, 'user_id');
-}
+    {
+        return $this->hasMany(\App\Models\CatatanArisan::class, 'user_id');
+    }
+
+    public function tabungan()
+    {
+        return $this->hasMany(\App\Models\Tabungan::class, 'user_id');
+    }
 }

@@ -15,10 +15,7 @@
         <div class="login-card">
             <div class="header">
                 <div class="logo-wrapper">
-                    <svg class="logo-icon" viewBox="0 0 24 24">
-                        <rect x="5" y="11" width="14" height="10" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
+                    <img src="{{ asset('logopangudi.png') }}" alt="Logo" style="width: 90px; height: 90px; object-fit: contain;">
                 </div>
                 <h1>Selamat Datang</h1>
                 <p class="subtitle">Login untuk melanjutkan</p>

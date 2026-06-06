@@ -118,6 +118,14 @@
                 </a>
             </li>
 
+            <!-- Tabungan Saya -->
+            <li class="nav-item {{ request()->routeIs('sekretaris.tabungan_saya') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('sekretaris.tabungan_saya') }}">
+                    <i class="fas fa-fw fa-piggy-bank"></i>
+                    <span>Tabungan Saya</span>
+                </a>
+            </li>
+
             <!-- Nav Item - Profile -->
             <li class="nav-item {{ request()->routeIs('sekretaris.profile.*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('sekretaris.profile.index') }}">

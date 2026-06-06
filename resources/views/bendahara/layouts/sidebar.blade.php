@@ -72,8 +72,20 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('bendahara.kas.index') }}">
-                    <i class="fas fa-fw fa-qrcode"></i>
+                    <i class="fas fa-fw fa-wallet"></i>
                     <span>Data Kas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('bendahara.tabungan.index') }}">
+                    <i class="fas fa-fw fa-piggy-bank"></i>
+                    <span>Data Tabungan</span>
+                </a>
+            </li>
+            <li class="nav-item {{ request()->routeIs('bendahara.tabungan_saya') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('bendahara.tabungan_saya') }}">
+                    <i class="fas fa-fw fa-coins"></i>
+                    <span>Tabungan Saya</span>
                 </a>
             </li>
             {{-- <li class="nav-item active">

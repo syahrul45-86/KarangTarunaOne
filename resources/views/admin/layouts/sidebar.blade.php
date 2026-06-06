@@ -72,8 +72,15 @@
             </li>
              <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.setting_rt.index') }}">
-                    <i class="fas fa-fw fa-qrcode"></i>
+                    <i class="fas fa-fw fa-cog"></i>
                     <span>Setting</span>
+                </a>
+            </li>
+
+            <li class="nav-item {{ request()->routeIs('admin.tabungan_saya') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.tabungan_saya') }}">
+                    <i class="fas fa-fw fa-piggy-bank"></i>
+                    <span>Tabungan Saya</span>
                 </a>
             </li>
            

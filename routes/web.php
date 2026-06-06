@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Superadmin\SuperadminController;
 use App\Http\Controllers\Superadmin\ProfileController;
+use App\Http\Controllers\Superadmin\UserAdminRTController;
+use App\Http\Controllers\SuperAdmin\RtController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Bendahara\BendaharaController;
 use App\Http\Controllers\Sekretaris\SekretarisController;
@@ -13,10 +15,9 @@ use App\Http\Controllers\QrcodeController;
 use App\Http\Controllers\Bendahara\ProfileBendaharaController;
 use App\Http\Controllers\Admin\ProfileAdminController;
 use App\Http\Controllers\Admin\TambahAnggotaController;
-use App\Http\Controllers\Superadmin\UserAdminRTController;
-use App\Http\Controllers\SuperAdmin\RtController;
 use App\Http\Controllers\Bendahara\CatatanKeuanganController;
-use App\Http\Controllers\Bendahara\DendaController;
+use App\Http\Controllers\bendahara\DendaController;
+use App\Http\Controllers\bendahara\TabunganController;
 use App\Http\Controllers\Sekretaris\AbsensiController;
 use App\Http\Controllers\Sekretaris\ProfileSekretarisController;
 use App\Http\Controllers\AbsensiScanController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Admin\RekapAbsensiControllers;
 use App\Http\Controllers\Admin\RekapArisanController;
 use App\Http\Controllers\Admin\RekapDendaController;
 use App\Http\Controllers\Admin\SettingRTController;
+use App\Http\Controllers\TabunganSayaController;
 
 
 
@@ -137,6 +139,9 @@ Route::get('/user-qr/{userId}', [TambahAnggotaController::class, 'getUserQR'])->
       // Simpan Setting RT
     Route::post('/setting-rt/save', [SettingRTController::class, 'save'])->name('admin.setting_rt.save');
 
+    // Tabungan Saya (Admin)
+    Route::get('/admin/tabungan-saya', [TabunganSayaController::class, 'index'])->name('admin.tabungan_saya');
+
 });
 
 Route::middleware(['auth', 'role:bendahara'])->group( function() {
@@ -193,7 +198,20 @@ Route::middleware(['auth', 'role:bendahara'])->group( function() {
     Route::get('bendahara/kas', [KasController::class, 'index'])->name('bendahara.kas.index');
     Route::get('bendahara/kas/create', [KasController::class, 'create'])->name('bendahara.kas.create');
     Route::post('bendahara/kas/store', [KasController::class, 'store'])->name('bendahara.kas.store');
+    Route::get('bendahara/kas/{id}/edit', [KasController::class, 'edit'])->name('bendahara.kas.edit');
+    Route::put('bendahara/kas/{id}', [KasController::class, 'update'])->name('bendahara.kas.update');
     Route::delete('bendahara/kas/{id}', [KasController::class, 'destroy'])->name('bendahara.kas.delete');
+
+    // Tabungan
+    Route::get('bendahara/tabungan', [TabunganController::class, 'index'])->name('bendahara.tabungan.index');
+    Route::get('bendahara/tabungan/create', [TabunganController::class, 'create'])->name('bendahara.tabungan.create');
+    Route::post('bendahara/tabungan/store', [TabunganController::class, 'store'])->name('bendahara.tabungan.store');
+    Route::get('bendahara/tabungan/{id}/edit', [TabunganController::class, 'edit'])->name('bendahara.tabungan.edit');
+    Route::put('bendahara/tabungan/{id}', [TabunganController::class, 'update'])->name('bendahara.tabungan.update');
+    Route::delete('bendahara/tabungan/{id}', [TabunganController::class, 'destroy'])->name('bendahara.tabungan.delete');
+
+    // Tabungan Saya (Bendahara)
+    Route::get('/bendahara/tabungan-saya', [TabunganSayaController::class, 'index'])->name('bendahara.tabungan_saya');
 });
 
 
@@ -300,6 +318,9 @@ Route::post('/arisan/anggota/remove', [CatatanArisanController::class, 'removeAn
     Route::post('/sekretaris/izin/{id}/approve', [App\Http\Controllers\Sekretaris\AbsensiController::class, 'approveIzin'])->name('sekretaris.izin.approve');
     Route::post('/sekretaris/izin/{id}/reject', [App\Http\Controllers\Sekretaris\AbsensiController::class, 'rejectIzin'])->name('sekretaris.izin.reject');
 
+    // Tabungan Saya (Sekretaris)
+    Route::get('/sekretaris/tabungan-saya', [TabunganSayaController::class, 'index'])->name('sekretaris.tabungan_saya');
+
 });
 
 
@@ -314,6 +335,9 @@ Route::middleware(['auth', 'role:anggota'])->group(function(){
     Route::post('/anggota/profile/password', [ProfileAnggotaController::class, 'updatePassword'])->name('anggota.profile.password');
 
     Route::get('/anggota/qrcode', [QrcodeController::class, 'show'])->name('anggota.qrcode.show');
+
+    // Tabungan Saya (Anggota)
+    Route::get('/anggota/tabungan-saya', [TabunganSayaController::class, 'index'])->name('anggota.tabungan_saya');
 
 });
 

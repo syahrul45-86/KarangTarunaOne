@@ -52,6 +52,39 @@ class KasController extends Controller
                          ->with('success', 'Setoran kas anggota berhasil dicatat!');
     }
 
+    public function edit($id)
+    {
+        $kas = Kas::where('id', $id)->where('rt_id', auth()->user()->rt_id)->firstOrFail();
+        $anggota = User::where('rt_id', auth()->user()->rt_id)
+                       ->whereIn('role', ['anggota', 'sekretaris', 'bendahara'])
+                       ->orderBy('name', 'asc')
+                       ->get();
+
+        return view('bendahara.kas.edit', compact('kas', 'anggota'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $kas = Kas::where('id', $id)->where('rt_id', auth()->user()->rt_id)->firstOrFail();
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'nominal' => 'required|numeric|min:0',
+            'tanggal' => 'required|date',
+            'keterangan' => 'nullable|string|max:255'
+        ]);
+
+        $kas->update([
+            'user_id' => $request->user_id,
+            'nominal' => $request->nominal,
+            'tanggal' => $request->tanggal,
+            'keterangan' => $request->keterangan
+        ]);
+
+        return redirect()->route('bendahara.kas.index')
+                         ->with('success', 'Data kas anggota berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
         $kas = Kas::where('id', $id)

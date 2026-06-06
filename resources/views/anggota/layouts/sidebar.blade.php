@@ -34,6 +34,13 @@
                 </a>
             </li>
 
+            <li class="nav-item {{ request()->routeIs('anggota.tabungan_saya') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('anggota.tabungan_saya') }}">
+                    <i class="fas fa-fw fa-piggy-bank"></i>
+                    <span>Tabungan Saya</span>
+                </a>
+            </li>
+
             @php
                 $now = now();
                 $activeFormsCount = \App\Models\AbsensiForm::where('rt_id', auth()->user()->rt_id)
