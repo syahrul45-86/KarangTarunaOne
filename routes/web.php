@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Superadmin\SuperadminController;
-use App\Http\Controllers\Superadmin\ProfileController;
-use App\Http\Controllers\Superadmin\UserAdminRTController;
+use App\Http\Controllers\SuperAdmin\SuperadminController;
+use App\Http\Controllers\SuperAdmin\ProfileController;
+use App\Http\Controllers\SuperAdmin\UserAdminRTController;
 use App\Http\Controllers\SuperAdmin\RtController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Bendahara\BendaharaController;
