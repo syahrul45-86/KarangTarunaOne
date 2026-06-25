@@ -26,12 +26,16 @@ class IzinAbsensiController extends Controller
                     return false;
                 }
 
-                // Hilangkan dari daftar jika user sudah mengajukan izin
+                // Hilangkan dari daftar jika user sudah mengajukan izin atau sudah absen
                 $sudahIzin = \App\Models\IzinAbsensi::where('form_id', $form->id)
                     ->where('user_id', auth()->id())
                     ->exists();
+
+                $sudahAbsen = \App\Models\Absensi::where('form_id', $form->id)
+                    ->where('user_id', auth()->id())
+                    ->exists();
                 
-                return !$sudahIzin;
+                return !$sudahIzin && !$sudahAbsen;
             });
 
         // Ambil izin yang sudah diajukan user ini

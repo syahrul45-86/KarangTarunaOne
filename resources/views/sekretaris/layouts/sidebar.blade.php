@@ -103,9 +103,15 @@
                         $waktuSelesai = \Carbon\Carbon::parse($form->tanggal . ' ' . $form->jam_selesai);
                         if ($now->greaterThan($waktuSelesai)) return false;
                         
-                        return !\App\Models\IzinAbsensi::where('form_id', $form->id)
+                        $sudahIzin = \App\Models\IzinAbsensi::where('form_id', $form->id)
                             ->where('user_id', auth()->id())
                             ->exists();
+                            
+                        $sudahAbsen = \App\Models\Absensi::where('form_id', $form->id)
+                            ->where('user_id', auth()->id())
+                            ->exists();
+                            
+                        return !$sudahIzin && !$sudahAbsen;
                     })->count();
             @endphp
             <li class="nav-item {{ request()->routeIs('user.izin.*') ? 'active' : '' }}">
