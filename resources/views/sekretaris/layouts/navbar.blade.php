@@ -351,11 +351,29 @@
             </button>
 
             <!-- Search Box (Desktop) -->
-            <div class="sekretaris-search-box">
+            <div class="sekretaris-search-box" style="position: relative;">
                 <i class="fas fa-search sekretaris-search-icon"></i>
                 <input type="text"
+                       id="sekretarisSearchInput"
                        class="sekretaris-search-input"
-                       placeholder="Cari anggota, kegiatan, atau transaksi...">
+                       placeholder="Cari anggota, absensi, atau kegiatan..."
+                       autocomplete="off"
+                       data-search-url="{{ route('sekretaris.search') }}">
+                <div id="sekretarisSearchResults" style="
+                    display: none;
+                    position: absolute;
+                    top: calc(100% + 8px);
+                    left: 0;
+                    width: 100%;
+                    min-width: 380px;
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                    z-index: 9999;
+                    max-height: 420px;
+                    overflow-y: auto;
+                    border: 1px solid #e2e8f0;
+                "></div>
             </div>
         </div>
 
@@ -363,9 +381,30 @@
         <div class="sekretaris-topbar-right">
             <!-- Mobile Search Icon -->
             <div class="sekretaris-mobile-search sekretaris-nav-item">
-                <button class="sekretaris-nav-icon-btn" id="sekretarisMobileSearchBtn">
+                <button class="sekretaris-nav-icon-btn" id="sekretarisMobileSearchBtn" title="Cari">
                     <i class="fas fa-search"></i>
                 </button>
+                <div id="sekretarisMobileSearchPanel" style="
+                    display: none;
+                    position: fixed;
+                    top: 70px; left: 0; right: 0;
+                    background: white;
+                    z-index: 9999;
+                    padding: 15px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                ">
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;"></i>
+                        <input type="text"
+                               id="sekretarisMobileSearchInput"
+                               class="sekretaris-search-input"
+                               style="width:100%; padding-left: 38px;"
+                               placeholder="Cari anggota, kegiatan..."
+                               autocomplete="off"
+                               data-search-url="{{ route('sekretaris.search') }}">
+                    </div>
+                    <div id="sekretarisMobileSearchResults" style="margin-top: 8px; max-height: 300px; overflow-y: auto;"></div>
+                </div>
             </div>
 
             <!-- Notifications -->
@@ -519,3 +558,5 @@
     });
 })();
 </script>
+
+@include('shared.search-js', ['prefix' => 'sekretaris', 'searchRoute' => 'sekretaris.search'])

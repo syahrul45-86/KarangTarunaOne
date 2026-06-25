@@ -30,12 +30,14 @@ use App\Http\Controllers\Admin\RekapArisanController;
 use App\Http\Controllers\Admin\RekapDendaController;
 use App\Http\Controllers\Admin\SettingRTController;
 use App\Http\Controllers\TabunganSayaController;
+use App\Http\Controllers\SearchController;
 
 
 
 // Role superadmin
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/superadmin', [SuperadminController::class, 'index'])->name('superadmin.dashboard');
+    Route::get('/superadmin/search', [SearchController::class, 'superadmin'])->name('superadmin.search');
 
     Route::get('/superadmin/profile', [ProfileController::class, 'index'])->name('superadmin.profile.index');
     Route::get('/superadmin/profile/edit', [ProfileController::class, 'edit'])->name('superadmin.profile.edit');
@@ -60,6 +62,7 @@ Route::delete('/superadmin/rt/{id}', [RtController::class, 'destroy'])->name('su
 
 Route::middleware(['auth', 'role:admin'])->group(function(){
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/search', [SearchController::class, 'admin'])->name('admin.search');
 
     Route::get('/admin/profile', [ProfileAdminController::class, 'index'])->name('admin.profile.index');
     Route::get('/admin/profile/edit', [ProfileAdminController::class, 'edit'])->name('admin.profile.edit');
@@ -146,6 +149,7 @@ Route::get('/user-qr/{userId}', [TambahAnggotaController::class, 'getUserQR'])->
 
 Route::middleware(['auth', 'role:bendahara'])->group( function() {
     Route::get('/dashboard', [BendaharaController::class, 'index'])->name('bendahara.dashboard');
+    Route::get('/bendahara/search', [SearchController::class, 'bendahara'])->name('bendahara.search');
 
     Route::get('/bendahara/profile', [ProfileBendaharaController::class, 'index'])->name('bendahara.profile.index');
     Route::get('/bendahara/profile/edit', [ProfileBendaharaController::class, 'edit'])->name('bendahara.profile.edit');
@@ -219,6 +223,7 @@ Route::middleware(['auth', 'role:bendahara'])->group( function() {
 
 Route::middleware(['auth', 'role:sekretaris'])->group(function(){
     Route::get('/sekretaris', [SekretarisController::class, 'index'])->name('sekretaris.dashboard');
+    Route::get('/sekretaris/search', [SearchController::class, 'sekretaris'])->name('sekretaris.search');
 
     Route::get('/sekretaris/profile', [ProfileSekretarisController::class, 'index'])->name('sekretaris.profile.index');
     Route::get('/sekretaris/profile/edit', [ProfileSekretarisController::class, 'edit'])->name('sekretaris.profile.edit');
@@ -239,25 +244,25 @@ Route::middleware(['auth', 'role:sekretaris'])->group(function(){
     Route::get('/sekretaris/absensi/{id}/qr', [AbsensiController::class, 'showQR'])
         ->name('sekretaris.absensi.qr');
 
-    Route::get('/sekretaris/absensi//{id}/scan', [AbsensiController::class, 'scanPage'])
+    Route::get('/sekretaris/absensi/{id}/scan', [AbsensiController::class, 'scanPage'])
         ->name('sekretaris.absensi.scan');
 
-    Route::post('/sekretaris/absensi//{id}/scan/process', [AbsensiController::class, 'processScan'])
+    Route::post('/sekretaris/absensi/{id}/scan/process', [AbsensiController::class, 'processScan'])
         ->name('sekretaris.absensi.process');
 
-    Route::get('/sekretaris/absensi//{id}/list', [AbsensiController::class, 'getAbsensiList'])
+    Route::get('/sekretaris/absensi/{id}/list', [AbsensiController::class, 'getAbsensiList'])
         ->name('sekretaris.absensi.list');
 
-    Route::get('/sekretaris/absensi//{id}/cek', [AbsensiController::class, 'cekAbsensi'])
+    Route::get('/sekretaris/absensi/{id}/cek', [AbsensiController::class, 'cekAbsensi'])
         ->name('sekretaris.absensi.cek');
 
-    Route::get('/sekretaris/absensi//{id}/proses-denda', [AbsensiController::class, 'prosesDenda'])
+    Route::get('/sekretaris/absensi/{id}/proses-denda', [AbsensiController::class, 'prosesDenda'])
         ->name('sekretaris.absensi.proses_denda');
 
     Route::post('/sekretaris/absensi/{id}/manual', [AbsensiController::class, 'manualAttend'])
         ->name('sekretaris.absensi.manual');
 
-    Route::delete('/sekretaris/absensi//{id}', [AbsensiController::class, 'destroy'])
+    Route::delete('/sekretaris/absensi/{id}', [AbsensiController::class, 'destroy'])
         ->name('sekretaris.absensi.delete');
 
 
@@ -328,6 +333,7 @@ Route::post('/arisan/anggota/remove', [CatatanArisanController::class, 'removeAn
 
 Route::middleware(['auth', 'role:anggota'])->group(function(){
     Route::get('/anggota', [AnggotaController::class, 'index'])->name('anggota.dashboard');
+    Route::get('/anggota/search', [SearchController::class, 'anggota'])->name('anggota.search');
 
     Route::get('/anggota/profile', [ProfileAnggotaController::class, 'index'])->name('anggota.profile.index');
     Route::get('/anggota/profile/edit', [ProfileAnggotaController::class, 'edit'])->name('anggota.profile.edit');

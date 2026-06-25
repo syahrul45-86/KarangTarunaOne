@@ -6,17 +6,36 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <form class="superadmin-search-box d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" onsubmit="return false;" style="position: relative;">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search ..."
-                                aria-label="Search" aria-describedby="basic-addon2">
+                            <input type="text"
+                                   id="superadminSearchInput"
+                                   class="form-control bg-light border-0 small"
+                                   placeholder="Cari RT, admin, atau pengguna..."
+                                   aria-label="Search"
+                                   autocomplete="off"
+                                   data-search-url="{{ route('superadmin.search') }}">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button class="btn btn-primary" type="button" id="superadminSearchBtn">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
                         </div>
+                        <!-- Search Results -->
+                        <div id="superadminSearchResults" style="
+                            display: none;
+                            position: absolute;
+                            top: calc(100% + 4px);
+                            left: 0;
+                            right: 0;
+                            background: white;
+                            border-radius: 10px;
+                            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                            z-index: 9999;
+                            max-height: 400px;
+                            overflow-y: auto;
+                            border: 1px solid #e2e8f0;
+                        "></div>
                     </form>
 
                     <!-- Topbar Navbar -->
@@ -31,17 +50,22 @@
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
                                 aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
+                                <form class="form-inline mr-auto w-100 navbar-search" onsubmit="return false;">
                                     <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
+                                        <input type="text"
+                                               id="superadminMobileSearchInput"
+                                               class="form-control bg-light border-0 small"
+                                               placeholder="Cari RT, admin..."
+                                               aria-label="Search"
+                                               autocomplete="off"
+                                               data-search-url="{{ route('superadmin.search') }}">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
                                         </div>
                                     </div>
+                                    <div id="superadminMobileSearchResults" style="margin-top:8px; max-height:250px; overflow-y:auto;"></div>
                                 </form>
                             </div>
                         </li>
@@ -217,3 +241,5 @@
                     </ul>
 
                 </nav>
+
+@include('shared.search-js', ['prefix' => 'superadmin', 'searchRoute' => 'superadmin.search'])

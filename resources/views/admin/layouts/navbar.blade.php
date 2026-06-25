@@ -351,11 +351,30 @@
             </button>
 
             <!-- Search Box (Desktop) -->
-            <div class="admin-search-box">
+            <div class="admin-search-box" style="position: relative;">
                 <i class="fas fa-search admin-search-icon"></i>
                 <input type="text"
+                       id="adminSearchInput"
                        class="admin-search-input"
-                       placeholder="Cari anggota, kegiatan, atau transaksi...">
+                       placeholder="Cari anggota, kegiatan, atau transaksi..."
+                       autocomplete="off"
+                       data-search-url="{{ route('admin.search') }}">
+                <!-- Search Results Dropdown -->
+                <div id="adminSearchResults" class="admin-search-results" style="
+                    display: none;
+                    position: absolute;
+                    top: calc(100% + 8px);
+                    left: 0;
+                    width: 100%;
+                    min-width: 380px;
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                    z-index: 9999;
+                    max-height: 420px;
+                    overflow-y: auto;
+                    border: 1px solid #e2e8f0;
+                "></div>
             </div>
         </div>
 
@@ -363,9 +382,33 @@
         <div class="admin-topbar-right">
             <!-- Mobile Search Icon -->
             <div class="admin-mobile-search admin-nav-item">
-                <button class="admin-nav-icon-btn" id="adminMobileSearchBtn">
+                <button class="admin-nav-icon-btn" id="adminMobileSearchBtn" title="Cari">
                     <i class="fas fa-search"></i>
                 </button>
+                <!-- Mobile Search Dropdown -->
+                <div id="adminMobileSearchPanel" style="
+                    display: none;
+                    position: fixed;
+                    top: 70px;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    z-index: 9999;
+                    padding: 15px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                ">
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;"></i>
+                        <input type="text"
+                               id="adminMobileSearchInput"
+                               class="admin-search-input"
+                               style="width:100%; padding-left: 38px;"
+                               placeholder="Cari anggota, kegiatan..."
+                               autocomplete="off"
+                               data-search-url="{{ route('admin.search') }}">
+                    </div>
+                    <div id="adminMobileSearchResults" style="margin-top: 8px; max-height: 300px; overflow-y: auto;"></div>
+                </div>
             </div>
 
             <!-- Notifications -->
@@ -484,6 +527,13 @@
                 d.classList.remove('active');
             });
         }
+        // Close search results if click outside
+        if (!e.target.closest('.admin-search-box') && !e.target.closest('#adminMobileSearchPanel')) {
+            const res = document.getElementById('adminSearchResults');
+            const mobilePanel = document.getElementById('adminMobileSearchPanel');
+            if (res) res.style.display = 'none';
+            if (mobilePanel) mobilePanel.style.display = 'none';
+        }
     }
 
     // Event Listeners
@@ -518,7 +568,131 @@
             document.querySelectorAll('.admin-dropdown').forEach(d => {
                 d.classList.remove('active');
             });
+            const res = document.getElementById('adminSearchResults');
+            const mobilePanel = document.getElementById('adminMobileSearchPanel');
+            if (res) res.style.display = 'none';
+            if (mobilePanel) mobilePanel.style.display = 'none';
         }
     });
+
+    // ============================
+    // SEARCH FUNCTIONALITY
+    // ============================
+    function buildResultsHtml(data, emptyMsg) {
+        if (!data.results || data.results.length === 0) {
+            return `<div style="padding: 20px; text-align: center; color: #94a3b8;">
+                        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px; display: block; opacity: 0.4;"></i>
+                        <div style="font-size: 13px;">${emptyMsg}</div>
+                    </div>`;
+        }
+        let html = '<div style="padding: 10px 0;">';
+        data.results.forEach(item => {
+            html += `
+            <a href="${item.url}" style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 16px;
+                text-decoration: none;
+                color: #1e293b;
+                border-left: 3px solid transparent;
+                transition: all 0.2s ease;
+            " onmouseover="this.style.background='#f8fafc';this.style.borderLeftColor='${item.color}';" onmouseout="this.style.background='';this.style.borderLeftColor='transparent';">
+                <div style="
+                    width: 36px; height: 36px; border-radius: 10px;
+                    background: ${item.color}20;
+                    color: ${item.color};
+                    display: flex; align-items: center; justify-content: center;
+                    flex-shrink: 0; font-size: 14px;
+                ">
+                    <i class="${item.icon}"></i>
+                </div>
+                <div style="min-width: 0;">
+                    <div style="font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title}</div>
+                    <div style="font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.subtitle}</div>
+                </div>
+                <i class="fas fa-chevron-right" style="margin-left: auto; color: #cbd5e1; font-size: 10px; flex-shrink: 0;"></i>
+            </a>`;
+        });
+        html += `<div style="padding: 8px 16px; font-size: 11px; color: #94a3b8; border-top: 1px solid #f1f5f9; text-align: right;">${data.total} hasil ditemukan</div>`;
+        html += '</div>';
+        return html;
+    }
+
+    function initSearch(inputId, resultsId, isMobile) {
+        const input = document.getElementById(inputId);
+        const results = document.getElementById(resultsId);
+        if (!input || !results) return;
+
+        const searchUrl = input.getAttribute('data-search-url');
+        let debounceTimer = null;
+        let currentRequest = null;
+
+        input.addEventListener('input', function() {
+            const q = this.value.trim();
+            clearTimeout(debounceTimer);
+
+            if (q.length < 2) {
+                results.style.display = 'none';
+                results.innerHTML = '';
+                return;
+            }
+
+            // Show loading
+            results.style.display = 'block';
+            results.innerHTML = `<div style="padding: 16px; text-align: center; color: #94a3b8;">
+                <i class="fas fa-spinner fa-spin"></i> Mencari...
+            </div>`;
+
+            debounceTimer = setTimeout(function() {
+                if (currentRequest) currentRequest.abort();
+                const controller = new AbortController();
+                currentRequest = controller;
+
+                fetch(`${searchUrl}?q=${encodeURIComponent(q)}`, {
+                    signal: controller.signal,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    results.style.display = 'block';
+                    results.innerHTML = buildResultsHtml(data, `Tidak ada hasil untuk "${q}"`);
+                })
+                .catch(err => {
+                    if (err.name !== 'AbortError') {
+                        results.style.display = 'block';
+                        results.innerHTML = `<div style="padding: 16px; text-align: center; color: #ef4444; font-size: 13px;"><i class="fas fa-exclamation-circle"></i> Gagal memuat hasil</div>`;
+                    }
+                });
+            }, 350);
+        });
+
+        input.addEventListener('focus', function() {
+            if (this.value.trim().length >= 2 && results.innerHTML !== '') {
+                results.style.display = 'block';
+            }
+        });
+    }
+
+    // Desktop Search
+    initSearch('adminSearchInput', 'adminSearchResults', false);
+
+    // Mobile Search Button Toggle
+    const mobileBtn = document.getElementById('adminMobileSearchBtn');
+    const mobilePanel = document.getElementById('adminMobileSearchPanel');
+    if (mobileBtn && mobilePanel) {
+        mobileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isVisible = mobilePanel.style.display === 'block';
+            mobilePanel.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                setTimeout(() => document.getElementById('adminMobileSearchInput')?.focus(), 100);
+            }
+        });
+    }
+
+    // Mobile Search Input
+    initSearch('adminMobileSearchInput', 'adminMobileSearchResults', true);
+
 })();
 </script>
